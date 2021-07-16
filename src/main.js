@@ -1,4 +1,8 @@
+import 'babel-polyfill'
 import Vue from 'vue'
+
+// import echarts from 'vue-echarts';
+import echarts from 'echarts'
 
 import Cookies from 'js-cookie'
 
@@ -44,7 +48,7 @@ Object.keys(filters).forEach(key => {
 })
 
 Vue.config.productionTip = false
-
+Vue.prototype.$echarts = echarts
 new Vue({
   el: '#app',
   router,

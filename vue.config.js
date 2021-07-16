@@ -24,7 +24,7 @@ module.exports = {
    * In most cases please use '/' !!!
    * Detail: https://cli.vuejs.org/config/#publicpath
    */
-  publicPath: '/',
+  publicPath: './',
   outputDir: 'dist',
   assetsDir: 'static',
   lintOnSave: process.env.NODE_ENV === 'development',
@@ -48,6 +48,15 @@ module.exports = {
       }
     }
   },
+  transpileDependencies: [
+    "axios",
+    "babel-polyfill",
+    "clipboard",
+    "codemirror",
+    "downloadjs",
+    "driver.js",
+    "dropzone",
+  ],
   chainWebpack(config) {
     // it can improve the speed of the first screen, it is recommended to turn on preload
     // it can improve the speed of the first screen, it is recommended to turn on preload

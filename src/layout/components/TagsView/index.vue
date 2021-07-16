@@ -1,5 +1,6 @@
 <template>
   <div id="tags-view-container" class="tags-view-container">
+
     <scroll-pane ref="scrollPane" class="tags-view-wrapper" @scroll="handleScroll">
       <router-link
         v-for="tag in visitedViews"
@@ -109,6 +110,7 @@ export default {
       }
       return false
     },
+
     moveToCurrentTag() {
       const tags = this.$refs.tag
       this.$nextTick(() => {
