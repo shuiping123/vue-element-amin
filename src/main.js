@@ -1,6 +1,7 @@
 import 'babel-polyfill'
 import Vue from 'vue'
 
+
 // import echarts from 'vue-echarts';
 import echarts from 'echarts'
 
@@ -41,6 +42,7 @@ Vue.use(Element, {
   size: Cookies.get('size') || 'medium', // set element-ui default size
   locale: enLang // 如果使用中文，无需设置，请删除
 })
+
 
 // register global utility filters
 Object.keys(filters).forEach(key => {

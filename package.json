@@ -22,7 +22,7 @@
     "core-js": "3.6.5",
     "driver.js": "0.9.5",
     "dropzone": "5.5.1",
-    "element-ui": "2.13.2",
+    "element-ui": "^2.13.2",
     "file-saver": "2.0.1",
     "fuse.js": "3.4.4",
     "js-cookie": "2.2.0",
@@ -98,8 +98,7 @@
     "management-system"
   ],
   "lint-staged": {
-    "src/**/*.{js,vue}": [
-    ]
+    "src/**/*.{js,vue}": []
   },
   "husky": {
     "hooks": {

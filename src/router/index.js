@@ -122,18 +122,32 @@ export const asyncRoutes = [
     children: [
       {
         path: 'test2-1',
-        hidden: true,
+        hidden: false,
         component: () => import('@/views/test2/Test2-1'),
         name: 'test2-1',
         meta: { title: '测试内容2-1', icon: 'icon', noCache: true }
       },
       {
         path: 'test2-2',
-        hidden: true,
+        hidden: false,
         component: () => import('@/views/test2/Test2-2'),
         name: 'test2-2',
         prop: ['name'],
         meta: { title: '测试内容2-2', icon: 'icon', noCache: true }
+      },
+      {
+        path: 'test2-3',
+        hidden: false,
+        component: () => import('@/views/test2/Test2-3'),
+        name: 'test2-3',
+        meta: { title: '测试内容2-3', icon: 'icon', noCache: true }
+      },
+      {
+        path: 'test2-4',
+        hidden: false,
+        component: () => import('@/views/test2/Test2-4'),
+        name: 'test2-4',
+        meta: { title: '测试内容2-4', icon: 'icon', noCache: true }
       }
 
     ]
