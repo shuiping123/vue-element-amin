@@ -1,24 +1,26 @@
-
 <template>
   <div>
     <tree-select :data="data"
                  ref="coms"
+                 multiple
                  :check-strictly="true"
-                  :checkedKeys="defaultCheckedKeys"></tree-select>
-<!--    <select-down-normal :data="data"-->
-<!--                 :check-strictly="false"-->
-<!--                  multiple-->
-<!--                 :checkedKeys="defaultCheckedKeys"></select-down-normal>-->
+                 :checkedKeys="defaultCheckedKeys"></tree-select>
+    <select-down-normal :data="data2"
+                        ref="apps"
+                        :check-strictly="false"
+                        multiple
+                        :checkedKeys="defaultCheckedKeys"></select-down-normal>
 
     <button type="button" @click="getValue">获取id</button>
     <p>{{value}}</p>
-<!--    <p>{{value2}}</p>-->
+    <p>{{value2}}</p>
   </div>
 </template>
 
 <script>
   import TreeSelect from '@/components/SelectDown/SelectDown';
   import SelectDownNormal from '@/components/SelectDown/SelectDownNormal';
+
   var menus = [
     {
       'menuId': 1,
@@ -87,21 +89,51 @@
       ]
     }
   ];
+  var menus3 = [
+    {
+      'menuId': 1,
+      'menuName': '全选',
+      'childrenList': [
+        {
+          'menuId': 100,
+          'menuName': '软件1'
+        },
+        {
+          'menuId': 101,
+          'menuName': '软件2'
+        }
+      ]
+    }
+  ];
+  var menus2 = [
+
+    {
+      'menuId': 1,
+      'menuName': '软件1',
+      "childrenList":[]
+    },
+    {
+      'menuId': 101,
+      'menuName': '软件2',
+      "childrenList":[]
+    }
+  ];
   export default {
     name: 'home',
-    components: { TreeSelect ,SelectDownNormal},
-    data () {
+    components: {TreeSelect, SelectDownNormal},
+    data() {
       return {
         data: menus,
+        data2: menus2,
         defaultCheckedKeys: [1],//默认选中的id，如果需要修改，在created里面修改
-        value:[],
-        value2:[],
+        value: [],
+        value2: [],
       };
     },
     methods: {
-      getValue(){
-        this.value=this.$refs.coms.value;
-        // this.value2=this.$refs.apps.value;
+      getValue() {
+        this.value = this.$refs.coms.value;
+        this.value2 = this.$refs.apps.value;
       },
     }
   };

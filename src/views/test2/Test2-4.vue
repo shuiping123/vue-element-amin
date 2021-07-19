@@ -54,7 +54,8 @@
 
     data() {
       return {
-        data: [{
+        data: [
+          {
           id: 1,
           label: '一级 1',
           children: [{

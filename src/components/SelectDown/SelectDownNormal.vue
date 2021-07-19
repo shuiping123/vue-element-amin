@@ -109,7 +109,7 @@
         isShowSelect: false, // 是否显示树状选择器
         options: [],
         selectedData: [], // 选中的节点
-        style: 'width:' + this.width + 'px;' + 'height:' + this.height + 'px;',
+        style: 'width:' + (this.width-20) + 'px;' + 'height:' + this.height + 'px;',
         selectStyle: 'width:' + (this.width + 24) + 'px;',
         checkedIds: [],
         checkedData: [],
@@ -126,6 +126,7 @@
             return node.label;
           });
           this.value=this.checkedKeys;
+
         } else {
           var item = this.checkedKeys[0];
           this.$refs.tree.setCurrentKey(item);
@@ -158,13 +159,11 @@
           this.options.push(tmpMap);
           this.selectedData = node.label;
           this.isShowSelect = !this.isShowSelect;
+          this.value=[node.key];
         }
       },
       // 节点选中状态发生变化时的回调
-      handleCheckChange(nowData,nowType) {
-        // nowData 当前点击的节点
-        // nowType 当前点击的节点改变后的状态
-
+      handleCheckChange() {
         var checkedKeys = this.$refs.tree.getCheckedKeys(); // 所有被选中的节点的 key 所组成的数组数据
         this.options = checkedKeys.map((item) => {
           var node = this.$refs.tree.getNode(item); // 所有被选中的节点对应的node
@@ -174,10 +173,14 @@
           return tmpMap;
 
         });
+
         this.selectedData = this.options.map((item) => {
           return item.label;
         });
-
+        let keyArr=this.$refs.tree.getCheckedNodes(true).map(item=>{
+          return item.menuId;
+        })
+        this.value=keyArr;
       }
     },
     watch: {
