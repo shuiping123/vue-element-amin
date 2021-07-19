@@ -2,15 +2,23 @@
 <template>
   <div>
     <tree-select :data="data"
-                 :check-strictly="guanlian"
-                 :defaultProps="defaultProps" multiple
-                 :nodeKey="nodeKey" :checkedKeys="defaultCheckedKeys"
-                 @popoverHide="popoverHide"></tree-select>
+                 ref="coms"
+                 :check-strictly="true"
+                  :checkedKeys="defaultCheckedKeys"></tree-select>
+<!--    <select-down-normal :data="data"-->
+<!--                 :check-strictly="false"-->
+<!--                  multiple-->
+<!--                 :checkedKeys="defaultCheckedKeys"></select-down-normal>-->
+
+    <button type="button" @click="getValue">获取id</button>
+    <p>{{value}}</p>
+<!--    <p>{{value2}}</p>-->
   </div>
 </template>
 
 <script>
   import TreeSelect from '@/components/SelectDown/SelectDown';
+  import SelectDownNormal from '@/components/SelectDown/SelectDownNormal';
   var menus = [
     {
       'menuId': 1,
@@ -35,6 +43,22 @@
             {
               'menuId': 1003,
               'menuName': '用户删除'
+            },
+            {
+              'menuId': 1004,
+              'menuName': '用户删除1'
+            },
+            {
+              'menuId': 1005,
+              'menuName': '用户删除2'
+            },
+            {
+              'menuId': 1009,
+              'menuName': '用户删除3'
+            },
+            {
+              'menuId': 10010,
+              'menuName': '用户删除4'
             }
           ]
         },
@@ -65,35 +89,20 @@
   ];
   export default {
     name: 'home',
-    components: { TreeSelect },
+    components: { TreeSelect ,SelectDownNormal},
     data () {
       return {
         data: menus,
-        defaultProps: {
-          children: 'childrenList',
-          label: 'menuName'
-        },
-        guanlian:true,
-        nodeKey: 'menuId',
-        defaultCheckedKeys: []
+        defaultCheckedKeys: [1],//默认选中的id，如果需要修改，在created里面修改
+        value:[],
+        value2:[],
       };
     },
-    created () {
-      // 注意：初始化defaultCheckedKeys时，在created里面
-      // 父组件先执行自己的created，然后子组件开始执行自己的created和mounted，最后父组件再执行自己的mounted。
-      // 因为此页面加载，先执行该组件自己的created，然后执行TreeSelect组件的created和mounted，最后执行该组件的mounted
-      this.defaultCheckedKeys = [1000];
-    },
-    mounted () {
-      // 此处初始化defaultCheckedKeys，没效果
-      this.defaultCheckedKeys = [1001];
-    },
     methods: {
-      popoverHide (checkedIds, checkedData,checkedType) {
-        // console.log(checkedIds);
-        // console.log(checkedData);
-        // console.log(checkedType);
-      }
+      getValue(){
+        this.value=this.$refs.coms.value;
+        // this.value2=this.$refs.apps.value;
+      },
     }
   };
 </script>

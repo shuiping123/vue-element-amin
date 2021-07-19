@@ -148,6 +148,20 @@ export const asyncRoutes = [
         component: () => import('@/views/test2/Test2-4'),
         name: 'test2-4',
         meta: { title: '测试内容2-4', icon: 'icon', noCache: true }
+      },
+      {
+        path: 'test2-5',
+        hidden: false,
+        component: () => import('@/views/test2/Test2-5'),
+        name: 'test2-5',
+        meta: { title: '测试内容2-5', icon: 'icon', noCache: true }
+      },
+      {
+        path: 'test2-6',
+        hidden: false,
+        component: () => import('@/views/test2/Test2-6'),
+        name: 'test2-6',
+        meta: { title: '测试内容2-6', icon: 'icon', noCache: true }
       }
 
     ]

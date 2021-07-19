@@ -30,9 +30,12 @@
                :default-checked-keys="defaultCheckedKeys"
                :highlight-current="true"
                @node-click="handleNodeClick"
+               @check="handleCheck"
                @check-change="handleCheckChange"></el-tree>
       <el-select :style="selectStyle" slot="reference" ref="select"
+                 style="overflow: hidden"
                  v-model="selectedData"
+                 :collapse-tags="true"
                  :multiple="multiple"
                  @click.native="isShowSelect = !isShowSelect"
                  class="tree-select">
@@ -50,52 +53,55 @@
       data: {
         type: Array,
         default() {
-          return [];
+          return []
         }
       },
       defaultProps: {
         type: Object,
         default() {
-          return {};
+          return {
+            children: 'childrenList',
+            label: 'menuName'
+          }
         }
       },
       // 配置是否可多选
       multiple: {
         type: Boolean,
         default() {
-          return false;
+          return false
         }
       },
       nodeKey: {
         type: String,
         default() {
-          return 'id';
+          return 'menuId'
         }
       },
       // 显示复选框情况下，是否严格遵循父子不互相关联
       checkStrictly: {
         type: Boolean,
         default() {
-          return false;//默认不关联 true:不关联  false:关联
+          return false//默认不关联 true:不关联  false:关联
         }
       },
       // 默认选中的节点key数组
       checkedKeys: {
         type: Array,
         default() {
-          return [];
+          return []
         }
       },
       width: {
         type: Number,
         default() {
-          return 250;
+          return 250
         }
       },
       height: {
         type: Number,
         default() {
-          return 300;
+          return 300
         }
       }
     },
@@ -105,26 +111,45 @@
         isShowSelect: false, // 是否显示树状选择器
         options: [],
         selectedData: [], // 选中的节点
-        style: 'width:' + this.width + 'px;' + 'height:' + this.height + 'px;',
+        style: 'width:' + (this.width - 20) + 'px;' + 'height:' + this.height + 'px;',
         selectStyle: 'width:' + (this.width + 24) + 'px;',
         checkedIds: [],
         checkedData: [],
-        checkedType: []
-      };
+        checkedType: [],
+        value:[]//存储真实的Id,在父组件可以通过refs获取，例如给子组件添加ref='hello',在父组件使用this.$refs.hello.value获取选中的id
+      }
     },
     mounted() {
       if (this.checkedKeys.length > 0) {
         if (this.multiple) {
-          this.defaultCheckedKeys = this.checkedKeys;
+          let arr=[];
+          this.checkedKeys.map(item=>{
+            var node = this.$refs.tree.getNode(item) // 所有被选中的节点对应的node
+            arr.push(node.key);
+            (function treeChild(children) {
+              if(children.childNodes.length!==0){
+                children.childNodes.map(child=>{
+                  arr.push(child.key);
+                  if (child.childNodes.length!==0){
+                    treeChild(child)
+                  }
+                })
+              }
+            }(node))
+          })
+          this.defaultCheckedKeys=arr;
+
           this.selectedData = this.checkedKeys.map((item) => {
-            var node = this.$refs.tree.getNode(item);
-            return node.label;
+            var node = this.$refs.tree.getNode(item)
+            return node.label
           });
+          this.value=this.checkedKeys;
         } else {
-          var item = this.checkedKeys[0];
-          this.$refs.tree.setCurrentKey(item);
-          var node = this.$refs.tree.getNode(item);
+          var item = this.checkedKeys[0]
+          this.$refs.tree.setCurrentKey(item)
+          var node = this.$refs.tree.getNode(item)
           this.selectedData = node.label;
+          this.value=this.checkedKeys;
         }
       }
     },
@@ -132,119 +157,157 @@
       popoverHide() {
 
         if (this.multiple) {
-          this.checkedIds = this.$refs.tree.getCheckedKeys(); // 所有被选中的节点的 key 所组成的数组数据
-          this.checkedData = this.$refs.tree.getCheckedNodes(); // 所有被选中的节点所组成的数组数据
-          this.checkedType = this.$refs.tree.getCheckedNodes(); // 所有被选中的节点所组成的数组数据
+          this.checkedIds = this.$refs.tree.getCheckedKeys() // 所有被选中的节点的 key 所组成的数组数据
+          this.checkedData = this.$refs.tree.getCheckedNodes() // 所有被选中的节点所组成的数组数据
+          this.checkedType = this.$refs.tree.getCheckedNodes() // 所有被选中的节点所组成的数组数据
         } else {
-          this.checkedIds = this.$refs.tree.getCurrentKey();
-          this.checkedData = this.$refs.tree.getCurrentNode();
+          this.checkedIds = this.$refs.tree.getCurrentKey()
+          this.checkedData = this.$refs.tree.getCurrentNode()
         }
-        this.$emit('popoverHide', this.checkedIds, this.checkedData, this.checkedType);
+        this.$emit('popoverHide', this.checkedIds, this.checkedData, this.checkedType)
       },
       // 节点被点击时的回调,返回被点击的节点数据
       handleNodeClick(data, node) {
         if (!this.multiple) {
-          let tmpMap = {};
-          tmpMap.value = node.key;
-          tmpMap.label = node.label;
-          this.options = [];
-          this.options.push(tmpMap);
-          this.selectedData = node.label;
+          let tmpMap = {}
+          tmpMap.value = node.key
+          tmpMap.label = node.label
+          this.options = []
+          this.options.push(tmpMap)
+          this.selectedData = node.label
           this.isShowSelect = !this.isShowSelect;
+          this.value=this.options.map(item=>{
+            return item.value;
+          });
         }
       },
+      handleCheckChange() {
+        // console.log('check')
+      },
       // 节点选中状态发生变化时的回调
-      handleCheckChange(nowData,nowType) {
+      handleCheck(nowData, nowCheck) {
         // nowData 当前点击的节点
         // nowType 当前点击的节点改变后的状态
+        let Tree = this.$refs.tree
+        let nowType = this.$refs.tree.getNode(nowData).checked;
+        var Parent=Tree.getNode(nowData).parent;//父节点
+        var ChildArr=Tree.getNode(nowData).childNodes;//子节点的集合
+        // 有子节点,now=>父节点
+        if (ChildArr.length !== 0) {
+          if (!nowType) {
+            var checkedKeys =Tree.getCheckedKeys() // 所有被选中的节点的 key 所组成的数组数据
+            checkedKeys = checkedKeys.filter(item => {
+              let state = 0;
+              (function xunhuan(parent) {
+                if (parent.childrenList !== undefined) {
+                  parent.childrenList.map(child => {
+                    if (child.childrenList !== undefined) {
+                      child.menuId == item ? state = 1 : null
+                      xunhuan(child)
+                    } else {
+                      child.menuId == item ? state = 1 : null
+                    }
+                  })
+                }
+              })(nowData)
+              return state != 1
+            })
+            this.$refs.tree.setCheckedKeys(checkedKeys)
+            this.options = []
+            checkedKeys.map((item) => {
+              var node = this.$refs.tree.getNode(item) // 所有被选中的节点对应的node
+              let tmpMap = {}
+              tmpMap.value = node.key
+              tmpMap.label = node.label
+              return tmpMap
 
-        if (this.$refs.tree.getNode(nowData).childNodes.length==0){
-          // 没有子节点,now=>子节点
-          if (!nowType){
-            var parent = this.$refs.tree.getNode(nowData).parent;
-            var checkedKeys = this.$refs.tree.getCheckedKeys(); // 所有被选中的节点的 key 所组成的数组数据
-            console.log(checkedKeys);
-            checkedKeys=checkedKeys.filter(item=>{
-              return parent.key!=item
-            });
-            console.log(checkedKeys)
-            this.$refs.tree.setCheckedKeys(checkedKeys);
-            this.options = checkedKeys.map((item) => {
-              var node = this.$refs.tree.getNode(item); // 所有被选中的节点对应的node
-              let tmpMap = {};
-              tmpMap.value = node.key;
-              tmpMap.label = node.label;
-              return tmpMap;
-            });
-            this.selectedData = this.options.map((item) => {
-              return item.label;
-            });
+            })
 
-          }
-        }else {
-          // 有子节点,now=>父节点
-          if (!nowType){
+          } else {
             var checkedKeys = this.$refs.tree.getCheckedKeys(); // 所有被选中的节点的 key 所组成的数组数据
-            checkedKeys=checkedKeys.filter(item=>{
-              let state=0;
-              nowData.childrenList.map(child=>{
-                child.menuId==item?state=1:null;
+
+            (function xunhuan(item) {
+              item.map((child) => {
+                if (child.childrenList !== undefined) {
+                  checkedKeys.push(child.menuId)
+                  xunhuan(child.childrenList)
+                } else {
+                  checkedKeys.push(child.menuId)
+                }
               })
-              return state!=1;
-            })
-            this.$refs.tree.setCheckedKeys(checkedKeys);
-            this.options = checkedKeys.map((item) => {
-              var node = this.$refs.tree.getNode(item); // 所有被选中的节点对应的node
-              let tmpMap = {};
-              tmpMap.value = node.key;
-              tmpMap.label = node.label;
-              return tmpMap;
+            }(nowData.childrenList))
 
-            });
-            this.selectedData = this.options.map((item) => {
-              return item.label;
-            });
-          }else{
-            var checkedKeys = this.$refs.tree.getCheckedKeys(); // 所有被选中的节点的 key 所组成的数组数据
-            nowData.childrenList.map(item=>{
-              checkedKeys.push(item.menuId)
-            })
-            this.$refs.tree.setCheckedKeys(checkedKeys);
+            this.$refs.tree.setCheckedKeys(checkedKeys)
             this.options = checkedKeys.map((item) => {
-              var node = this.$refs.tree.getNode(item); // 所有被选中的节点对应的node
-              let tmpMap = {};
-              tmpMap.value = node.key;
-              tmpMap.label = node.label;
-              return tmpMap;
+              var node = this.$refs.tree.getNode(item) // 所有被选中的节点对应的node
+              let tmpMap = {}
+              tmpMap.value = node.key
+              tmpMap.label = node.label
+              return tmpMap
 
-            });
-            this.selectedData = this.options.map((item) => {
-              return item.label;
-            });
+            })
+
           }
         }
-        var checkedKeys = this.$refs.tree.getCheckedKeys(); // 所有被选中的节点的 key 所组成的数组数据
-        this.options = checkedKeys.map((item) => {
-          var node = this.$refs.tree.getNode(item); // 所有被选中的节点对应的node
-          let tmpMap = {};
-          tmpMap.value = node.key;
-          tmpMap.label = node.label;
-          return tmpMap;
+        // 没有子节点,now=>子节点
+        if (Tree.getNode(nowData).parent.parent) {
+          if (!nowType) {
+            var parent = this.$refs.tree.getNode(nowData).parent
+            var checkedKeys = this.$refs.tree.getCheckedKeys() // 所有被选中的节点的 key 所组成的数组数据
+            // console.log(checkedKeys);
+            checkedKeys = checkedKeys.filter(item => {
+              return parent.key != item
+            })
+            this.$refs.tree.setCheckedKeys(checkedKeys)
+            this.options = checkedKeys.map((item) => {
+              var node = this.$refs.tree.getNode(item) // 所有被选中的节点对应的node
+              let tmpMap = {}
+              tmpMap.value = node.key
+              tmpMap.label = node.label
+              return tmpMap
+            })
 
+
+          }
+        }
+        var checkedKeys = this.$refs.tree.getCheckedKeys() // 所有被选中的节点的 key 所组成的数组数据
+        this.options = checkedKeys.map((item) => {
+          var node = this.$refs.tree.getNode(item) // 所有被选中的节点对应的node
+          let tmpMap = {}
+          tmpMap.value = node.key
+          tmpMap.label = node.label
+          return tmpMap
+
+        })
+        // this.selectedData = this.options.filter((item) => {
+        //   return item.label
+        // })
+
+        let arr=this.options.filter(item=>{
+          let nowP=Tree.getNode(item.value).parent;
+          if (nowP.checked){
+            return false;
+          }else {
+            return true;
+          }
         });
-        this.selectedData = this.options.map((item) => {
+        this.selectedData=arr.map(item=>{
           return item.label;
         });
+        this.value=arr.map(item=>{
+          return item.value;
+        })
+
 
       }
     },
     watch: {
       isShowSelect(val) {
         // 隐藏select自带的下拉框
-        this.$refs.select.blur();
+        this.$refs.select.blur()
       }
     }
-  };
+  }
 </script>
 
 <style scoped>
