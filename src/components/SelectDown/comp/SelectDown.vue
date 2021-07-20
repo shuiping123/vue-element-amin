@@ -17,9 +17,9 @@
      */
 -->
 <template>
-  <div>
+  <div class="searchItem">
     <div class="mask" v-show="isShowSelect" @click="isShowSelect = !isShowSelect"></div>
-    <el-popover placement="bottom-start" :width="width" trigger="manual"
+    <el-popover placement="bottom-start" :width="width+100" trigger="manual"
                 v-model="isShowSelect" @hide="popoverHide">
       <el-tree class="common-tree" :style="style" ref="tree" :data="data" :props="defaultProps"
                :show-checkbox="multiple"
@@ -35,6 +35,7 @@
       <el-select :style="selectStyle" slot="reference" ref="select"
                  style="overflow: hidden"
                  v-model="selectedData"
+                 :placeholder="placeholder"
                  :collapse-tags="true"
                  :multiple="multiple"
                  @click.native="isShowSelect = !isShowSelect"
@@ -72,6 +73,12 @@
           return false
         }
       },
+      placeholder:{
+        type:String,
+        default(){
+          return '请选择'
+        }
+      },
       nodeKey: {
         type: String,
         default() {
@@ -95,7 +102,7 @@
       width: {
         type: Number,
         default() {
-          return 250
+          return 200
         }
       },
       height: {
@@ -103,7 +110,8 @@
         default() {
           return 300
         }
-      }
+      },
+      checkData:{}
     },
     data() {
       return {
@@ -111,7 +119,7 @@
         isShowSelect: false, // 是否显示树状选择器
         options: [],
         selectedData: [], // 选中的节点
-        style: 'width:' + (this.width - 20) + 'px;' + 'height:' + this.height + 'px;',
+        style: 'width:' + (this.width - 20+100) + 'px;' + 'height:' + this.height + 'px;',
         selectStyle: 'width:' + (this.width + 24) + 'px;',
         checkedIds: [],
         checkedData: [],
@@ -120,6 +128,9 @@
       }
     },
     mounted() {
+      this.defaultCheckedKeys = [];
+      this.selectedData = [];
+      this.value = [];
       if (this.checkedKeys.length > 0) {
         if (this.multiple) {
           let arr = [];
@@ -266,7 +277,6 @@
                 checks = checks.filter(item => {
                   return node.parent.key != item
                 })
-                console.log(checks)
                 checkedKeys=checks
               }
             }
@@ -318,6 +328,9 @@
       isShowSelect(val) {
         // 隐藏select自带的下拉框
         this.$refs.select.blur()
+      },
+      value(newVal){
+        this.$emit('update:checkData',newVal)
       }
     }
   }
