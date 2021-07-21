@@ -1,6 +1,6 @@
 <template>
   <div style="width:100%">
-    <search-select com="com" showdate="showdate" user="user" app="app"></search-select>
+    <search-select com="com" showdate="showdate" user="user" app="app" module="module"></search-select>
   </div>
 </template>
 

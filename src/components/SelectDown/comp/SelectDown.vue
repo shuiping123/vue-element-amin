@@ -130,7 +130,7 @@
     mounted() {
       this.defaultCheckedKeys = [];
       this.selectedData = [];
-      this.value = [];
+      // this.value = [];
       if (this.checkedKeys.length > 0) {
         if (this.multiple) {
           let arr = [];
@@ -163,6 +163,7 @@
           this.value = this.checkedKeys;
         }
       }
+      this.$emit('changeCheck')
     },
     methods: {
       popoverHide() {
@@ -191,6 +192,7 @@
             return item.value;
           });
         }
+        this.$emit('changeCheck')
       },
       handleCheckChange() {
         // console.log('check')
@@ -302,10 +304,6 @@
           return tmpMap
 
         })
-        // this.selectedData = this.options.filter((item) => {
-        //   return item.label
-        // })
-
         let arr = this.options.filter(item => {
           let nowP = Tree.getNode(item.value).parent;
           if (nowP.checked) {
@@ -320,8 +318,7 @@
         this.value = arr.map(item => {
           return item.value;
         })
-
-
+        this.$emit('changeCheck')
       }
     },
     watch: {

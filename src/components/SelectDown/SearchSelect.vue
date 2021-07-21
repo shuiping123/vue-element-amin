@@ -1,5 +1,5 @@
 <template>
-  <div >
+  <div>
     <div class="searchDiv">
       <!--时间选择-->
       <time-choose v-if="showdate" ref="datetime" type="datetimerange" :value.sync="date"></time-choose>
@@ -7,10 +7,11 @@
       <tree-select v-if="com" :data="data"
                    ref="coms"
                    multiple
-                   :checkData.sync="value"
+                   @changeCheck="changeCheck('com')"
+                   :checkData.sync="coms"
                    :check-strictly="true"
                    placeholder="请选择单位"
-                   :checkedKeys="value"></tree-select>
+                   :checkedKeys="coms"></tree-select>
       <!--用户-->
       <select-down-normal v-if="user" :data="data2"
                           ref="users"
@@ -24,18 +25,29 @@
                           ref="apps"
                           :check-strictly="false"
                           multiple
+                          @changeCheck="changeCheck('app')"
                           :checkData.sync="apps"
                           placeholder="请选择软件"
                           :checkedKeys="apps"></select-down-normal>
+      <!--模块-->
+      <select-down-normal v-if="module" :data="data4"
+                          ref="apps"
+                          :check-strictly="false"
+                          multiple
+                          :checkData.sync="modules"
+                          placeholder="请选择模块"
+                          :checkedKeys="modules"></select-down-normal>
     </div>
-    <p>{{value}}</p>
+    <p>{{date}}</p>
+    <p>{{coms}}</p>
     <p>{{users}}</p>
     <p>{{apps}}</p>
-    <p>{{date}}</p>
+    <p>{{modules}}</p>
   </div>
 </template>
 
 <script>
+  import {request} from '@/network/';
   import TreeSelect from '@/components/SelectDown/comp/SelectDown'
   import SelectDownNormal from '@/components/SelectDown/comp/SelectDownNormal'
   import TimeChoose from '@/components/SelectDown/comp/TimeChoose'
@@ -138,76 +150,132 @@
       'childrenList': []
     }
   ]
+  var menus5 = [
+    {
+      'menuId': 0,
+      'menuName': '全选',
+      'childrenList': [
+        {
+          'menuId': 1,
+          'menuName': '模块1'
+        },
+        {
+          'menuId': 2,
+          'menuName': '模块2'
+        }
+      ]
+    }
+  ]
   export default {
     name: 'searchSelect',
-    props:['showdate','com','user','app'],
+    props: ['showdate', 'com', 'user', 'app', 'module'],
     components: { TreeSelect, SelectDownNormal, TimeChoose },
     data() {
       return {
-        data: [],
-        data2: [],
-        data3: [],
-        value: [],
-        users: [],
-        apps: [],
-        defaultdate: ['2021-10-20', '2021-11-20'],
-        date: ''
+        data: [],// 单位数据 - 下拉菜单
+        data2: [],// 用户数据 - 下拉菜单
+        data3: [],// 软件数据 - 下拉菜单
+        data4: [],// 模块数据 - 下拉菜单
+        coms: [],// 选中的单位数据
+        users: [],// 选中的用户数据
+        apps: [],// 选中的软件数据
+        modules: [],// 选中的模块数据
+        date: ''// 当前的时间数据
 
       }
     },
-    watch:{
-      value(newVal){
-        if (newVal[0]==1){
-          this.users=[];
-          this.data2=menus2;
-        }else {
-          this.users=[];
-          this.data2=menus3;
-        }
-      }
-    },
     methods: {
-      getCom(){
-        setTimeout(()=>{
-          this.data=menus;
-        },3000)
+      // 下拉菜单异步获取
+      getCom() {
+        this.data = []
+        this.coms = []
+        setTimeout(() => {
+          this.data = menus
+          this.coms = []
+        }, 3000)
       },
-      getUserLst(){
-        setTimeout(()=>{
-          this.data2=menus2;
-        },3000)
+      getUserLst() {
+        this.data2 = []
+        this.users = []
+        setTimeout(() => {
+          this.data2 = menus2
+          this.users = []
+        }, 3000)
+        request({
+          // url:'/Ashx/ISystemOverview.ashx',
+          url:'/Ashx/DropSelData.ashx',
+          data:{
+            ty:'GetComSel'
+          }
+        }).then((res,err)=>{
+          console.log(res)
+          console.log(err)
+        })
       },
-      getApp(){
-        setTimeout(()=>{
-          this.data3=menus4;
-        },3000)
+      getApp() {
+        this.data3 = []
+        this.apps = []
+        setTimeout(() => {
+          this.data3 = menus4
+          this.apps = []
+        }, 3000)
+      },
+      getModule() {
+        this.data4 = []
+        this.modules = []
+        setTimeout(() => {
+          this.data4 = menus5
+          this.modules = []
+        }, 3000)
+      },
+      // 下拉菜单之间的联动关系管理
+      changeCheck(node) {
+        switch (node) {
+          case 'com':
+            if (this.user) {
+              this.getUserLst();//
+            }
+            break
+          case 'app':
+            if (this.module) {
+              this.getModule();//
+            }
+              break;
+        }
+
       }
     },
     mounted() {
-      if (this.com){
-        this.getCom();
+      // 默认加载
+      if (this.com) {
+        this.getCom()
       }
-      if (this.user){
+      // 被联动数据，默认不在此初始加载,要卸载联动管理里
+      if (this.user&&!this.com){
         this.getUserLst();
       }
-      if (this.app){
-        this.getApp();
+      if (this.app) {
+        this.getApp()
+      }
+      if (this.module&&!this.app){
+        this.getModule();
       }
     }
   }
 </script>
 
 <style>
-  .searchDiv{
+  .searchDiv {
     width: 100%;
     display: -ms-flex;
     display: -o-flex;
     display: -moz-flex;
     display: flex;
-    flex-wrap:wrap
+    flex-wrap: wrap
 
   }
-  .searchItem{
+
+  .searchItem {
     width: 230px;
     padding: 10px;
   }

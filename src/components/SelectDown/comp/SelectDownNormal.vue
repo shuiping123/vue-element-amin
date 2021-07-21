@@ -148,6 +148,7 @@
           this.value = this.checkedKeys
         }
       }
+      this.$emit('changeCheck')
     },
     methods: {
       popoverHide() {
@@ -174,6 +175,7 @@
           this.isShowSelect = !this.isShowSelect
           this.value = [node.key]
         }
+        this.$emit('changeCheck')
       },
       // 节点选中状态发生变化时的回调
       handleCheckChange() {
@@ -194,6 +196,7 @@
           return item.menuId
         })
         this.value = keyArr
+        this.$emit('changeCheck')
       }
     },
     watch: {
@@ -205,15 +208,14 @@
         this.$emit('update:checkData', newVal)
       },
       checkData(newVal) {
+        this.$refs.tree.setCheckedKeys(newVal);
         this.options = newVal.map((item) => {
           var node = this.$refs.tree.getNode(item) // 所有被选中的节点对应的node
           let tmpMap = {}
           tmpMap.value = node.key
           tmpMap.label = node.label
           return tmpMap
-
         })
-
         this.selectedData = this.options.map((item) => {
           return item.label
         })
