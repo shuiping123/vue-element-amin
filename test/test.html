@@ -6,8 +6,23 @@
         content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <title>Document</title>
+  <script src="./jquery-3.4.1.min.js"></script>
 </head>
 <body>
+<script>
+  $.ajax({
+    url:'http://localhost:8080/coms',
+    type:'post',
+    // dataType: "jsonp",
+    // jsonpCallback: "showData",
+    success:function(res) {
+      console.log(111);
+      console.log(res);
+    }
+
+  })
+</script>
+
 
 </body>
 </html>

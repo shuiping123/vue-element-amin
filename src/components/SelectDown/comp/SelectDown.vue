@@ -328,7 +328,25 @@
       },
       value(newVal){
         this.$emit('update:checkData',newVal)
-      }
+      },
+      checkData(newVal) {
+        // if (this.$refs.tree!=null)
+        this.$refs.tree.setCheckedKeys(newVal);
+        // var arr=newVal.filter((item) => {
+        //   var node = this.$refs.tree.getNode(item) // 所有被选中的节点对应的node
+        //   return node!=null
+        // })
+        this.options =newVal.map(item=>{
+          var node = this.$refs.tree.getNode(item) // 所有被选中的节点对应的node
+          let tmpMap = {}
+          tmpMap.value = node.key
+          tmpMap.label = node.label
+          return tmpMap
+        })
+          this.selectedData = this.options.map((item) => {
+          return item.label
+        })
+      },
     }
   }
 </script>

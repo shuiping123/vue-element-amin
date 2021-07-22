@@ -1,6 +1,6 @@
 <template>
   <div class="searchItem" style="width: 405px">
-    <el-date-picker
+    <el-date-picker v-if="type!='timerange'"
       v-model="value2"
       :type="type"
       :picker-options="pickerOptions"
@@ -9,6 +9,14 @@
       end-placeholder="结束日期"
       align="right">
     </el-date-picker>
+    <el-time-picker v-else
+      is-range
+      v-model="value2"
+      range-separator="至"
+      start-placeholder="开始时间"
+      end-placeholder="结束时间"
+      placeholder="选择时间范围">
+    </el-time-picker>
   </div>
 </template>
 
@@ -100,15 +108,19 @@
     },
     watch: {
       value2(newVal) {
-        if (newVal != '') {
+        if (newVal != ''&&newVal!=undefined&&newVal!=null) {
           this.date = newVal.map(item => {
             let date = new Date(item)
             if(this.type=='daterange'){
               return date.getFullYear()+ '-'+(date.getMonth()+1)+'-'+date.getDate();
-            }else{
+            }else if (this.type=='datetimerange'){
               return date.getFullYear()+ '-'+(date.getMonth()+1)+'-'+date.getDate()+' '+date.getHours()+':'+date.getMinutes()+':'+date.getSeconds();
+            }else if(this.type=='timerange'){
+              return date.getHours()+':'+date.getMinutes()+':'+date.getSeconds();
             }
           })
+        }else {
+          this.date='';
         }
       },
       date(newVal){

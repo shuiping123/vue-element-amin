@@ -128,7 +128,6 @@
     },
     mounted() {
       this.defaultCheckedKeys = []
-
       this.selectedData = []
       this.value = []
       if (this.checkedKeys.length > 0) {
@@ -174,8 +173,9 @@
           this.selectedData = node.label
           this.isShowSelect = !this.isShowSelect
           this.value = [node.key]
+          this.$emit('changeCheck')
         }
-        this.$emit('changeCheck')
+
       },
       // 节点选中状态发生变化时的回调
       handleCheckChange() {
@@ -219,7 +219,10 @@
         this.selectedData = this.options.map((item) => {
           return item.label
         })
-      }
+      },
+      data(newVal){
+        this.$emit('changeCheck')
+      },
     }
   }
 </script>
