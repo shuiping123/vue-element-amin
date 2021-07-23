@@ -116,4 +116,95 @@ app.all('/coms',function(req,res) {
   ];
   res.json(obj)
 })
+app.all('/users',function(req,res) {
+  var obj=[
+    {
+      'menuId': 1,
+      'menuName': '全选',
+      'childrenList': [
+        {
+          'menuId': 100,
+          'menuName': '用户1'
+        },
+        {
+          'menuId': 101,
+          'menuName': '用户2'
+        }
+      ]
+    }
+  ];
+  res.json(obj)
+})
+app.all('/apptypes',function(req,res) {
+  var obj=[
+    {
+      'menuId': 1,
+      'menuName': '全选',
+      'childrenList': [
+        {
+          'menuId': 100,
+          'menuName': '方式1'
+        },
+        {
+          'menuId': 101,
+          'menuName': '方式2'
+        }
+      ]
+    }
+  ];
+  var obj1=[
+
+    {
+      'menuId': 100,
+      'menuName': '方式1'
+    },
+    {
+      'menuId': 101,
+      'menuName': '方式2'
+    }
+  ];
+  res.json(obj1)
+})
+app.all('/apps',function(req,res) {
+  var obj=[
+    {
+      'menuId': 1,
+      'menuName': '全选',
+      'childrenList': [
+        {
+          'menuId': 100,
+          'menuName': '软件1'
+        },
+        {
+          'menuId': 101,
+          'menuName': '软件2'
+        }
+      ]
+    }
+  ];
+  res.json(obj)
+})
+app.all('/modules',function(req,res) {
+  var obj=[
+    {
+      'menuId': 1,
+      'menuName': '全选',
+      'childrenList': [
+        {
+          'menuId': 100,
+          'menuName': '模块1'
+        },
+        {
+          'menuId': 101,
+          'menuName': '模块2'
+        }
+      ]
+    }
+  ];
+  res.json(obj)
+})
+
+
+
+
 

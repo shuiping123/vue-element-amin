@@ -12,7 +12,7 @@ export default {
       this.$router.push({
         name: urlName,
         params: {
-          comid: id
+          comid: id,
         }
       })
       this.$store.dispatch('tagsView/addView', this.$route)

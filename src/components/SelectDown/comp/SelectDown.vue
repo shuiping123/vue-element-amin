@@ -29,6 +29,7 @@
                :expand-on-click-node="false"
                :default-checked-keys="defaultCheckedKeys"
                :highlight-current="true"
+               :check-on-click-node="multiple?false:true"
                @node-click="handleNodeClick"
                @check="handleCheck"
                @check-change="handleCheckChange"></el-tree>
@@ -70,7 +71,7 @@
       multiple: {
         type: Boolean,
         default() {
-          return false
+          return true
         }
       },
       placeholder:{
@@ -180,6 +181,7 @@
       },
       // 节点被点击时的回调,返回被点击的节点数据
       handleNodeClick(data, node) {
+
         if (!this.multiple) {
           let tmpMap = {}
           tmpMap.value = node.key
@@ -191,134 +193,200 @@
           this.value = this.options.map(item => {
             return item.value;
           });
-        }
         this.$emit('changeCheck')
+        }
       },
       handleCheckChange() {
         // console.log('check')
       },
       // 节点选中状态发生变化时的回调
       handleCheck(nowData, nowCheck) {
-        // nowData 当前点击的节点
-        // nowType 当前点击的节点改变后的状态
-        let Tree = this.$refs.tree
-        let nowType = this.$refs.tree.getNode(nowData).checked;
-        var Parent = Tree.getNode(nowData).parent;//父节点
-        var ChildArr = Tree.getNode(nowData).childNodes;//子节点的集合
-        // 有子节点,now=>父节点
-        if (ChildArr.length !== 0) {
-          if (!nowType) {
-            var checkedKeys = Tree.getCheckedKeys() // 所有被选中的节点的 key 所组成的数组数据
-            checkedKeys = checkedKeys.filter(item => {
-              let state = 0;
-              (function xunhuan(parent) {
-                if (parent.childrenList !== undefined) {
-                  parent.childrenList.map(child => {
-                    if (child.childrenList !== undefined) {
-                      child.menuId == item ? state = 1 : null
-                      xunhuan(child)
-                    } else {
-                      child.menuId == item ? state = 1 : null
-                    }
-                  })
-                }
-              })(nowData)
-              return state != 1
-            })
-            this.$refs.tree.setCheckedKeys(checkedKeys)
-            this.options = []
-            checkedKeys.map((item) => {
-              var node = this.$refs.tree.getNode(item) // 所有被选中的节点对应的node
-              let tmpMap = {}
-              tmpMap.value = node.key
-              tmpMap.label = node.label
-              return tmpMap
-
-            })
-
-          } else {
-            var checkedKeys = this.$refs.tree.getCheckedKeys(); // 所有被选中的节点的 key 所组成的数组数据
-
-            (function xunhuan(item) {
-              item.map((child) => {
-                if (child.childrenList !== undefined) {
-                  checkedKeys.push(child.menuId)
-                  xunhuan(child.childrenList)
-                } else {
-                  checkedKeys.push(child.menuId)
-                }
+        if (this.multiple){
+          // nowData 当前点击的节点
+          // nowType 当前点击的节点改变后的状态
+          let Tree = this.$refs.tree
+          let nowType = this.$refs.tree.getNode(nowData).checked;
+          var Parent = Tree.getNode(nowData).parent;//父节点
+          var ChildArr = Tree.getNode(nowData).childNodes;//子节点的集合
+          // 有子节点,now=>父节点
+          if (ChildArr.length !== 0) {
+            if (!nowType) {
+              var checkedKeys = Tree.getCheckedKeys() // 所有被选中的节点的 key 所组成的数组数据
+              checkedKeys = checkedKeys.filter(item => {
+                let state = 0;
+                (function xunhuan(parent) {
+                  if (parent.childrenList !== undefined) {
+                    parent.childrenList.map(child => {
+                      if (child.childrenList !== undefined) {
+                        child.menuId == item ? state = 1 : null
+                        xunhuan(child)
+                      } else {
+                        child.menuId == item ? state = 1 : null
+                      }
+                    })
+                  }
+                })(nowData)
+                return state != 1
               })
-            }(nowData.childrenList))
+              this.$refs.tree.setCheckedKeys(checkedKeys)
+              this.options = []
+              checkedKeys.map((item) => {
+                var node = this.$refs.tree.getNode(item) // 所有被选中的节点对应的node
+                let tmpMap = {}
+                tmpMap.value = node.key
+                tmpMap.label = node.label
+                return tmpMap
 
-            this.$refs.tree.setCheckedKeys(checkedKeys)
-            this.options = checkedKeys.map((item) => {
-              var node = this.$refs.tree.getNode(item) // 所有被选中的节点对应的node
-              let tmpMap = {}
-              tmpMap.value = node.key
-              tmpMap.label = node.label
-              return tmpMap
+              })
 
-            })
+            } else {
+              var checkedKeys = this.$refs.tree.getCheckedKeys(); // 所有被选中的节点的 key 所组成的数组数据
 
+              (function xunhuan(item) {
+                item.map((child) => {
+                  if (child.childrenList !== undefined) {
+                    checkedKeys.push(child.menuId)
+                    xunhuan(child.childrenList)
+                  } else {
+                    checkedKeys.push(child.menuId)
+                  }
+                })
+              }(nowData.childrenList))
+
+              this.$refs.tree.setCheckedKeys(checkedKeys)
+              this.options = checkedKeys.map((item) => {
+                var node = this.$refs.tree.getNode(item) // 所有被选中的节点对应的node
+                let tmpMap = {}
+                tmpMap.value = node.key
+                tmpMap.label = node.label
+                return tmpMap
+
+              })
+
+            }
           }
-        }
-        // 没有子节点,now=>子节点
-        if (Tree.getNode(nowData).parent.parent) {
-          if (!nowType) {
-            // console.log(checkedKeys);
-            // checkedKeys = checkedKeys.filter(item => {
-            //   return parent.key != item
-            // })
-            function cancleP(node, checks) {
-              checks = checks.filter(item => {
-                return node.parent.key != item
-              })
-              if (node.parent.parent) {
-                cancleP(node.parent, checks)
-              } else {
+          // 没有子节点,now=>子节点
+          if (Tree.getNode(nowData).parent.parent) {
+            if (!nowType) {
+              // console.log(checkedKeys);
+              // checkedKeys = checkedKeys.filter(item => {
+              //   return parent.key != item
+              // })
+              function cancleP(node, checks) {
                 checks = checks.filter(item => {
                   return node.parent.key != item
                 })
-                checkedKeys=checks
+                if (node.parent.parent) {
+                  cancleP(node.parent, checks)
+                } else {
+                  checks = checks.filter(item => {
+                    return node.parent.key != item
+                  })
+                  checkedKeys=checks
+                }
               }
+              cancleP(Tree.getNode(nowData), this.$refs.tree.getCheckedKeys());
+              this.$refs.tree.setCheckedKeys(checkedKeys)
+              this.options = checkedKeys.map((item) => {
+                var node = this.$refs.tree.getNode(item) // 所有被选中的节点对应的node
+                let tmpMap = {}
+                tmpMap.value = node.key
+                tmpMap.label = node.label
+                return tmpMap
+              })
+
+
             }
-            cancleP(Tree.getNode(nowData), this.$refs.tree.getCheckedKeys());
-            this.$refs.tree.setCheckedKeys(checkedKeys)
-            this.options = checkedKeys.map((item) => {
-              var node = this.$refs.tree.getNode(item) // 所有被选中的节点对应的node
-              let tmpMap = {}
-              tmpMap.value = node.key
-              tmpMap.label = node.label
-              return tmpMap
-            })
-
-
           }
+          var checkedKeys = this.$refs.tree.getCheckedKeys() // 所有被选中的节点的 key 所组成的数组数据
+          this.options = checkedKeys.map((item) => {
+            var node = this.$refs.tree.getNode(item) // 所有被选中的节点对应的node
+            let tmpMap = {}
+            tmpMap.value = node.key
+            tmpMap.label = node.label
+            return tmpMap
+
+          })
+          let arr = this.options.filter(item => {
+            let nowP = Tree.getNode(item.value).parent;
+            if (nowP.checked) {
+              return false;
+            } else {
+              return true;
+            }
+          });
+          this.selectedData = arr.map(item => {
+            return item.label;
+          });
+          this.value = arr.map(item => {
+            return item.value;
+          })
+          this.$emit('changeCheck')
         }
-        var checkedKeys = this.$refs.tree.getCheckedKeys() // 所有被选中的节点的 key 所组成的数组数据
-        this.options = checkedKeys.map((item) => {
-          var node = this.$refs.tree.getNode(item) // 所有被选中的节点对应的node
-          let tmpMap = {}
-          tmpMap.value = node.key
-          tmpMap.label = node.label
-          return tmpMap
+      },
+      setCheckNodes(keys){
+        if (this.multiple){
+         setTimeout(()=>{
+           if (keys.length > 0) {
+             let Tree = this.$refs.tree
+             keys.map(item => {
+               var ChildArr = Tree.getNode(item).childNodes//子节点的集合
+               // 有子节点,now=>父节点
+               if (ChildArr.length !== 0) {
+                 var checkedKeys = this.$refs.tree.getCheckedKeys(); // 所有被选中的节点的 key 所组成的数组数据
 
-        })
-        let arr = this.options.filter(item => {
-          let nowP = Tree.getNode(item.value).parent;
-          if (nowP.checked) {
-            return false;
-          } else {
-            return true;
-          }
-        });
-        this.selectedData = arr.map(item => {
-          return item.label;
-        });
-        this.value = arr.map(item => {
-          return item.value;
-        })
-        this.$emit('changeCheck')
+                 (function xunhuan(item) {
+                   item.map((child) => {
+                     if (child.childNodes.length !== 0) {
+                       checkedKeys.push(child.key)
+                       xunhuan(child.childNodes)
+                     } else {
+                       checkedKeys.push(child.key)
+                     }
+                   })
+                 }(ChildArr))
+
+                 checkedKeys.push(item)
+                 this.$refs.tree.setCheckedKeys(checkedKeys)
+
+                 this.options = checkedKeys.map((item) => {
+                   var node = this.$refs.tree.getNode(item) // 所有被选中的节点对应的node
+                   let tmpMap = {}
+                   tmpMap.value = node.key
+                   tmpMap.label = node.label
+                   return tmpMap
+                 })
+                 this.selectedData = keys.map((item) => {
+                   var node = this.$refs.tree.getNode(item) // 所有被选中的节点对应的node
+                   return node.label
+                 })
+
+               }else{
+                 this.$refs.tree.setCheckedKeys(keys)
+                 this.options = keys.map(item => {
+                   var node = this.$refs.tree.getNode(item) // 所有被选中的节点对应的node
+                   let tmpMap = {}
+                   tmpMap.value = node.key
+                   tmpMap.label = node.label
+                   return tmpMap
+                 })
+                 this.selectedData = this.options.map((item) => {
+                   return item.label
+                 })
+               }
+             })
+
+           }else {
+             this.$refs.tree.setCheckedKeys(keys)
+             this.selectedData=[];
+           }
+         },200)
+       }else {
+         setTimeout(()=>{
+           this.$refs.tree.setCheckedKeys(keys)
+           this.selectedData=[];
+         },200)
+       }
       }
     },
     watch: {
@@ -328,25 +396,7 @@
       },
       value(newVal){
         this.$emit('update:checkData',newVal)
-      },
-      checkData(newVal) {
-        // if (this.$refs.tree!=null)
-        this.$refs.tree.setCheckedKeys(newVal);
-        // var arr=newVal.filter((item) => {
-        //   var node = this.$refs.tree.getNode(item) // 所有被选中的节点对应的node
-        //   return node!=null
-        // })
-        this.options =newVal.map(item=>{
-          var node = this.$refs.tree.getNode(item) // 所有被选中的节点对应的node
-          let tmpMap = {}
-          tmpMap.value = node.key
-          tmpMap.label = node.label
-          return tmpMap
-        })
-          this.selectedData = this.options.map((item) => {
-          return item.label
-        })
-      },
+      }
     }
   }
 </script>

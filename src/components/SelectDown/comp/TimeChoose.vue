@@ -1,5 +1,5 @@
 <template>
-  <div class="searchItem" style="width: 405px">
+  <div class="searchItem" style="width:auto!important;">
     <el-date-picker v-if="type!='timerange'"
       v-model="value2"
       :type="type"

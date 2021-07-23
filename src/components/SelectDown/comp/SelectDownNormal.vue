@@ -26,10 +26,12 @@
                :node-key="nodeKey"
                :check-strictly="checkStrictly"
                default-expand-all
+               :check-on-click-node="multiple?false:true"
                :expand-on-click-node="false"
                :default-checked-keys="defaultCheckedKeys"
                :highlight-current="true"
                @node-click="handleNodeClick"
+               @check="handleCheck"
                @check-change="handleCheckChange"></el-tree>
       <el-select :style="selectStyle" slot="reference" ref="select"
                  v-model="selectedData"
@@ -127,9 +129,9 @@
       }
     },
     mounted() {
-      this.defaultCheckedKeys = []
-      this.selectedData = []
-      this.value = []
+      // this.defaultCheckedKeys = []
+      // this.selectedData = []
+      // this.value = []
       if (this.checkedKeys.length > 0) {
         if (this.multiple) {
           this.defaultCheckedKeys = this.checkedKeys
@@ -147,11 +149,10 @@
           this.value = this.checkedKeys
         }
       }
-      this.$emit('changeCheck')
+      // this.$emit('changeCheck')
     },
     methods: {
       popoverHide() {
-
         if (this.multiple) {
           this.checkedIds = this.$refs.tree.getCheckedKeys() // 所有被选中的节点的 key 所组成的数组数据
           this.checkedData = this.$refs.tree.getCheckedNodes() // 所有被选中的节点所组成的数组数据
@@ -164,6 +165,7 @@
       },
       // 节点被点击时的回调,返回被点击的节点数据
       handleNodeClick(data, node) {
+
         if (!this.multiple) {
           let tmpMap = {}
           tmpMap.value = node.key
@@ -177,26 +179,97 @@
         }
 
       },
-      // 节点选中状态发生变化时的回调
       handleCheckChange() {
-        var checkedKeys = this.$refs.tree.getCheckedKeys() // 所有被选中的节点的 key 所组成的数组数据
-        this.options = checkedKeys.map((item) => {
-          var node = this.$refs.tree.getNode(item) // 所有被选中的节点对应的node
-          let tmpMap = {}
-          tmpMap.value = node.key
-          tmpMap.label = node.label
-          return tmpMap
+      },
+      // 节点选中状态发生变化时的回调
+      handleCheck() {
+        if (this.multiple) {
+          var checkedKeys = this.$refs.tree.getCheckedKeys() // 所有被选中的节点的 key 所组成的数组数据
+          this.options = checkedKeys.map((item) => {
+            var node = this.$refs.tree.getNode(item) // 所有被选中的节点对应的node
+            let tmpMap = {}
+            tmpMap.value = node.key
+            tmpMap.label = node.label
+            return tmpMap
+          })
+          this.selectedData = this.options.map((item) => {
+            return item.label
+          })
+          let keyArr = this.$refs.tree.getCheckedNodes(true).map(item => {
+            return item.menuId
+          })
+          this.value = keyArr
+          this.$emit('changeCheck')
+        }
+      },
+      setCheckNodes(keys) {
+        if (this.multiple) {
+          setTimeout(() => {
+            if (keys.length > 0) {
+              let Tree = this.$refs.tree
+              keys.map(item => {
+                var ChildArr = Tree.getNode(item).childNodes//子节点的集合
+                // 有子节点,now=>父节点
+                if (ChildArr.length !== 0) {
+                  var checkedKeys = this.$refs.tree.getCheckedKeys(); // 所有被选中的节点的 key 所组成的数组数据
 
-        })
+                  (function xunhuan(item) {
+                    item.map((child) => {
+                      // console.log(child)
+                      if (child.childNodes.length !== 0) {
+                        checkedKeys.push(child.key)
+                        xunhuan(child.childNodes)
+                      } else {
+                        checkedKeys.push(child.key)
+                      }
+                    })
+                  }(ChildArr))
 
-        this.selectedData = this.options.map((item) => {
-          return item.label
-        })
-        let keyArr = this.$refs.tree.getCheckedNodes(true).map(item => {
-          return item.menuId
-        })
-        this.value = keyArr
-        this.$emit('changeCheck')
+                  checkedKeys.push(item)
+                  this.$refs.tree.setCheckedKeys(checkedKeys)
+
+                  this.options = checkedKeys.map((item) => {
+                    var node = this.$refs.tree.getNode(item) // 所有被选中的节点对应的node
+                    let tmpMap = {}
+                    tmpMap.value = node.key
+                    tmpMap.label = node.label
+                    return tmpMap
+                  })
+                  this.selectedData = keys.map((item) => {
+                    var node = this.$refs.tree.getNode(item) // 所有被选中的节点对应的node
+                    return node.label
+                  })
+
+                } else {
+                  this.$refs.tree.setCheckedKeys(keys)
+                  this.options = keys.map(item => {
+                    var node = this.$refs.tree.getNode(item) // 所有被选中的节点对应的node
+                    let tmpMap = {}
+                    tmpMap.value = node.key
+                    tmpMap.label = node.label
+                    return tmpMap
+                  })
+                  this.selectedData = this.options.map((item) => {
+                    return item.label
+                  })
+                }
+              })
+
+            } else {
+              this.$refs.tree.setCheckedKeys(keys)
+              this.selectedData = []
+            }
+          }, 200)
+        } else {
+          setTimeout(() => {
+            this.$refs.tree.setCheckedKeys(keys)
+            if (keys.length > 0) {
+              this.selectedData=this.$refs.tree.getNode(keys[0]).label;
+            } else {
+              this.selectedData = ''
+            }
+          }, 500)
+        }
       }
     },
     watch: {
@@ -206,23 +279,7 @@
       },
       value(newVal) {
         this.$emit('update:checkData', newVal)
-      },
-      checkData(newVal) {
-        this.$refs.tree.setCheckedKeys(newVal);
-        this.options = newVal.map((item) => {
-          var node = this.$refs.tree.getNode(item) // 所有被选中的节点对应的node
-          let tmpMap = {}
-          tmpMap.value = node.key
-          tmpMap.label = node.label
-          return tmpMap
-        })
-        this.selectedData = this.options.map((item) => {
-          return item.label
-        })
-      },
-      data(newVal){
-        this.$emit('changeCheck')
-      },
+      }
     }
   }
 </script>
