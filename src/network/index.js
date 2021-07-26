@@ -16,6 +16,11 @@ export function request(config) {
     // xhrFields: { withCredentials: true },
     // crossDomain: true
   })
+  instance.interceptors.response.use(res=>{
+    return res.data
+  },error => {
+    return error
+  })
   return instance(config)
 }
 

@@ -6,14 +6,14 @@
       <!--时间选择-->
       <time-choose v-if="showtime" ref="datetime" type="timerange" :value.sync="date2"></time-choose>
       <!--单位选择-->
-      <tree-select v-if="com=='mutiple'" :data="data"
+      <tree-select v-if="com=='multiple'" :data="data"
                    ref="coms"
                    @changeCheck="changeCheck('com')"
                    :checkData.sync="coms"
                    :check-strictly="true"
                    placeholder="请选择单位"
                    :checkedKeys="coms"></tree-select>
-      <select-down-normal v-if="com!=='mutiple'" :data="data"
+      <select-down-normal v-if="com!=='multiple'" :data="data"
                           ref="coms"
                           :check-strictly="true"
                           :multiple="false"
@@ -21,11 +21,20 @@
                           :checkData.sync="coms"
                           placeholder="请选择单位"
                           :checkedKeys="coms"></select-down-normal>
+      <!--部门-->
+      <select-down-normal v-if="dep=='multiple'" :data="dataForDep"
+                          ref="depRef"
+                          :check-strictly="false"
+                          :multiple="this.dep=='multiple'"
+                          @changeCheck="changeCheck('dep')"
+                          :checkData.sync="deps"
+                          placeholder="请选择部门"
+                          :checkedKeys="deps"></select-down-normal>
       <!--用户-->
       <select-down-normal v-if="user" :data="data2"
                           ref="users"
                           :check-strictly="false"
-                          :multiple="this.user=='mutiple'"
+                          :multiple="this.user=='multiple'"
                           :checkData.sync="users"
                           placeholder="请选择用户"
                           :checkedKeys="users"></select-down-normal>
@@ -33,7 +42,7 @@
       <select-down-normal v-if="apptype" :data="data1"
                           ref="apptypes"
                           :check-strictly="false"
-                          :multiple="this.apptype=='mutiple'"
+                          :multiple="this.apptype=='multiple'"
                           :checkData.sync="apptypes"
                           @changeCheck="changeCheck('apptype')"
                           placeholder="请选择软件采集方式"
@@ -42,7 +51,7 @@
       <select-down-normal v-if="app" :data="data3"
                           ref="apps"
                           :check-strictly="false"
-                          :multiple="this.app=='mutiple'"
+                          :multiple="this.app=='multiple'"
                           @changeCheck="changeCheck('app')"
                           :checkData.sync="apps"
                           placeholder="请选择软件"
@@ -51,45 +60,127 @@
       <select-down-normal v-if="module" :data="data4"
                           ref="modules"
                           :check-strictly="false"
-                          :multiple="this.module=='mutiple'"
+                          :multiple="this.module=='multiple'"
                           :checkData.sync="modules"
                           placeholder="请选择模块"
                           :checkedKeys="modules"></select-down-normal>
+      <!--输入关键字-->
+      <div class="searchItem">
+        <el-input
+          v-if="showkeywords"
+          placeholder="请输入关键字"
+          v-model="keywords">
+          <i slot="prefix" class="el-input__icon el-icon-search"></i>
+        </el-input>
+      </div>
+      <!--查询条件 - 安装软件信息查询-->
+      <select-down-normal v-if="showsearchterm" :data="data5"
+                          ref="searchTermRef"
+                          :check-strictly="false"
+                          :multiple="this.showsearchterm=='multiple'"
+                          :checkData.sync="searchTerms"
+                          placeholder="请选择查询条件"
+                          :checkedKeys="searchTerms"></select-down-normal>
+      <!--是否卸载 - 安装软件信息查询-->
+      <select-down-normal v-if="showisunstall" :data="data6"
+                          ref="isUnstallRef"
+                          :check-strictly="false"
+                          :multiple="this.showisunstall=='multiple'"
+                          :checkData.sync="isUnstall"
+                          placeholder="请选择是否卸载"
+                          :checkedKeys="isUnstall"></select-down-normal>
+      <!--输入用户名-->
+      <div class="searchItem">
+        <el-input
+          v-if="showusername"
+          placeholder="请输入用户名"
+          v-model="userName">
+          <i slot="prefix" class="el-input__icon el-icon-search"></i>
+        </el-input>
+      </div>
+      <!--输入设备名-->
+      <div class="searchItem">
+        <el-input
+          v-if="showdevname"
+          placeholder="输入设备名"
+          v-model="devName">
+          <i slot="prefix" class="el-input__icon el-icon-search"></i>
+        </el-input>
+      </div>
+      <!--超时时间范围-->
+      <select-down-normal v-if="showovertime" :data="data7"
+                          ref="overTimeRef"
+                          :check-strictly="false"
+                          :multiple="this.showovertime=='multiple'"
+                          :checkData.sync="overTimeType"
+                          placeholder="请选择超时时间范围"
+                          :checkedKeys="overTimeType"></select-down-normal>
     </div>
-<!--    <p>{{date}}</p>-->
-<!--    <p>{{date2}}</p>-->
-<!--    <p>单位：{{coms}}</p>-->
-<!--    <p>用户：{{users}}</p>-->
-<!--    <p>采集方式：{{apptypes}}</p>-->
-<!--    <p>软件：{{apps}}</p>-->
-<!--    <p>模块：{{modules}}</p>-->
+    <!--    <p>{{date}}</p>-->
+    <!--    <p>{{date2}}</p>-->
+    <!--    <p>单位：{{coms}}</p>-->
+    <!--    <p>用户：{{users}}</p>-->
+    <!--    <p>采集方式：{{apptypes}}</p>-->
+    <!--    <p>软件：{{apps}}</p>-->
+    <!--    <p>模块：{{modules}}</p>-->
   </div>
 </template>
 
 <script>
-  import {request} from '@/network/';
+  import { request } from '@/network/'
   import TreeSelect from '@/components/SelectDown/comp/SelectDown'
   import SelectDownNormal from '@/components/SelectDown/comp/SelectDownNormal'
   import TimeChoose from '@/components/SelectDown/comp/TimeChoose'
 
+  const URL='/Ashx/DropSelData.ashx';
+
   export default {
     name: 'searchSelect',
-    props: ['showdate','showtime', 'com', 'user', 'apptype', 'app', 'module'],
+    props: ['showdate', 'showtime', 'com', 'user',
+      'apptype', 'app', 'module', 'showkeywords',
+      'showsearchterm', 'showisunstall', 'showusername', 'showdevname',
+      'showovertime', 'dep'],
     components: { TreeSelect, SelectDownNormal, TimeChoose },
     data() {
       return {
+        // 下拉菜单
         data: [],// 单位数据 - 下拉菜单
+        dataForDep: [],// 部门数据 - 下拉菜单
         data1: [],// 采集方式数据 - 下拉菜单
         data2: [],// 用户数据 - 下拉菜单
         data3: [],// 软件数据 - 下拉菜单
         data4: [],// 模块数据 - 下拉菜单
+        data5: [],// 查询条件数据数据 - 下拉菜单
+        data6: [
+          { 'menuId': 3, 'menuName': '全部' },
+          { 'menuId': 0, 'menuName': '未卸载' },
+          { 'menuId': 1, 'menuName': '已卸载' }
+        ],// 是否卸载 - 下拉菜单
+        data7: [
+          { 'menuId': 0, 'menuName': '全部' },
+          { 'menuId': 1, 'menuName': '24小时-48小时' },
+          { 'menuId': 2, 'menuName': '48小时-72小时' },
+          { 'menuId': 3, 'menuName': '72小时-120小时' },
+          { 'menuId': 4, 'menuName': '120小时-168小时' },
+          { 'menuId': 5, 'menuName': '大于168小时' }
+        ],// 超时时间范围 - 下拉菜单
+
+        // 选中的数据
         coms: [],// 选中的单位数据
+        deps: [],// 选中的部门数据
         users: [],// 选中的用户数据
-        apptypes: [],// 选中的软件数据
+        apptypes: [],// 选中的软件类型数据
         apps: [],// 选中的软件数据
         modules: [],// 选中的模块数据
         date: '',// 当前的时间数据 带有日期，例 2020-10-20 | 2020-10-20 10:00:00
-        date2: ''// 当前的时间数据 只有时间，例 10:00:00
+        date2: '',// 当前的时间数据 只有时间，例 10:00:00
+        keywords: '',//关键字模糊查询
+        searchTerms: [],//选中的查询条件
+        isUnstall: [],// 选中的是否卸载的数据
+        userName: '',//用户模糊查询
+        devName: '',//设备名模糊查询
+        overTimeType: []//选中的超时占用时长范围
+
       }
     },
     methods: {
@@ -99,119 +190,188 @@
         // this.coms = []
         request({
           // url:'/Ashx/ISystemOverview.ashx',
-          url:'/coms',
-          data:{
-            ty:'GetComSel',
-            zml:1
+          url: '/coms',
+          data: {
+            // ty: 'GetComSel',
+            zml: 1
           }
-        }).then(res=>{
-          if (type=='init'){
-            this.data = res.data
-            const {comid}=this.$route.params;
-            this.coms = comid?comid:this.com=='mutiple'?[]:[this.data[0].menuId];
+        }).then(res => {
+          if (type == 'init') {
+            this.data = res
+            const { comid } = this.$route.params
+            this.coms = comid ? comid : this.com == 'multiple' ? [] : [this.data[0].menuId]
             this.$refs.coms.setCheckNodes(this.coms)
-          }else {
+          } else {
 
-            this.data = res.data
-            this.coms = this.com=='mutiple'?[]:[this.data[0].menuId];
+            this.data = res
+            this.coms = this.com == 'multiple' ? [] : [this.data[0].menuId]
             this.$refs.coms.setCheckNodes(this.coms)
           }
-          if (this.user){
-            this.getUserLst(type);
+          if (this.dep) {
+            this.getDep(type)
           }
+          if (!this.dep && this.user) this.getUserLst(type)
 
-        }).catch(err=>{
-          console.log(err);
+        }).catch(err => {
+          console.log(err)
+        })
+      },
+      getDep(type) {
+        this.dataForDep = []
+        this.deps = []
+        request({
+          url: URL,
+          data: {
+            ty: 'GetDepSel',
+            ComId: this.coms.join(',')
+          }
+        }).then(res => {
+          if (res.reCode==2){
+            this.$alert(res.reMsg, '错误信息', {
+              confirmButtonText: '重新登录',
+              callback: action => {
+                this.$current.toLoginOut();
+              }
+            });
+            return false;
+          }
+          let isMultiple = this.dep == 'multiple'
+          let obj = res.reData.map(item => {
+            return {
+              menuId: item.DepId,
+              menuName: item.DepName
+            }
+          })
+          this.dataForDep = isMultiple ? [
+            {
+              menuId: 'all',
+              menuName: '全选',
+              childrenList: obj
+            }
+          ] : obj
+          if (type == 'init') {
+            const { depid } = this.$route.params
+            this.deps = depid ? depid : isMultiple ? [] : [this.data2[0].menuId]
+          } else {
+            this.deps = isMultiple ? [] : [this.data2[0].menuId]
+          }
+          this.$refs.depRef.setCheckNodes(this.deps)
+          if (this.user) this.getUserLst(type)
+
+        }).catch(err => {
+          console.log(err)
         })
       },
       getUserLst(type) {
         this.data2 = []
         this.users = []
         request({
-          // url:'/Ashx/ISystemOverview.ashx',
-          url:'/users',
-          data:{
-            ty:'GetComSel',
-            zml:1
+          url: URL,
+          data: {
+            ty: 'GetComUsrSel',
+            ComId: this.coms.join(','),
+            DepId: this.deps.join(',')
           }
-        }).then(res=>{
-          if (type=='init'){
-            this.data2 = res.data
-            const {usrid}=this.$route.params;
-            this.users = usrid?usrid:this.user=='mutiple'?[]:[this.data2[0].menuId];
-            this.$refs.users.setCheckNodes(this.users)
-          }else {
-            this.data2 = res.data;
-            this.users = this.user=='mutiple'?[]:[this.data2[0].menuId];
-            this.$refs.users.setCheckNodes(this.users)
+        }).then(res => {
+          if (res.reCode==2){
+            this.$alert(res.reMsg, '错误信息', {
+              confirmButtonText: '重新登录',
+              callback: action => {
+                this.$current.toLoginOut();
+              }
+            });
+            return false;
           }
+          let isMultiple = this.user == 'multiple'
+          let obj = res.reData.map(item => {
+            return {
+              menuId: item.UsrId,
+              menuName: item.UsrName
+            }
+          })
+          this.data2 = isMultiple ? [
+            {
+              menuId: 'all',
+              menuName: '全选',
+              childrenList: obj
+            }
+          ] : obj
+          if (type == 'init') {
+            const { usrid } = this.$route.params
+            this.users = usrid ? usrid : isMultiple ? [] : [this.data2[0].menuId]
+          } else {
+            this.users = isMultiple ? [] : [this.data2[0].menuId]
+          }
+          this.$refs.users.setCheckNodes(this.users)
 
-        }).catch(err=>{
-          console.log(err);
+        }).catch(err => {
+          console.log(err)
         })
       },
-      getAppType(type){
-        this.data1 = []
-        this.apptypes = []
-        request({
-          // url:'/Ashx/ISystemOverview.ashx',
-          url:'/apptypes',
-          data:{
-            ty:'GetComSel',
-            zml:1
+      getAppType(type) {
+        let isMultiple = this.apptype == 'multiple'
+        this.data1 = isMultiple ? [
+          {
+            menuId: 'all', menuName: '全选', childrenList: [
+              { menuId: 2, menuName: 'Agent采集方式' },
+              { menuId: 1, menuName: 'Log采集方式' }
+            ]
           }
-        }).then(res=>{
-          if (type=='init'){
-            this.data1 = res.data
-            const {apptypeid}=this.$route.params;
-            this.apptypes = apptypeid?apptypeid:this.apptype=='mutiple'?[]:[this.data1[0].menuId];
-            this.$refs.apptypes.setCheckNodes(this.apptypes)
-          }else {
-            this.data1 = res.data;
-            this.apptypes = this.apptype=='mutiple'?[]:[this.data1[0].menuId];
-            this.$refs.apptypes.setCheckNodes(this.apptypes)
-          }
-          if (this.app){
-            this.getApp(type);
-          }
-
-        }).catch(err=>{
-          console.log(err);
-        })
-
-        // setTimeout(() => {
-        //   this.data1 = menus1
-        //   this.apptypes = []
-        //   this.getApp(type);
-        // }, 3000)
+        ] : [
+          { menuId: 2, menuName: 'Agent采集方式' },
+          { menuId: 1, menuName: 'Log采集方式' }
+        ]
+        if (type == 'init') {
+          const { apptypeid } = this.$route.params
+          this.apptypes = apptypeid ? apptypeid : isMultiple ? [] : [this.data1[0].menuId]
+        } else {
+          this.apptypes = isMultiple ? [] : [this.data1[0].menuId]
+        }
+        this.$refs.apptypes.setCheckNodes(this.apptypes)
+        if (this.app) {
+          this.getApp(type)
+        }
       },
       getApp(type) {
         this.data3 = []
         this.apps = []
         request({
-          // url:'/Ashx/ISystemOverview.ashx',
-          url:'/apps',
-          data:{
-            ty:'GetComSel',
-            zml:1
+          url: URL,
+          data: {
+            ty: 'GetComFamSel',
           }
-        }).then(res=>{
-          if (type=='init'){
-            this.data3 = res.data
-            const {appid}=this.$route.params;
-            this.apps = appid?appid:this.app=='mutiple'?[]:[this.data3[0].menuId];
-            this.$refs.apps.setCheckNodes(this.apps)
-          }else {
-            this.data3 = res.data;
-            this.apps = this.app=='mutiple'?[]:[this.data3[0].menuId];
-            this.$refs.apps.setCheckNodes(this.apps)
+        }).then(res => {
+          if (res.reCode==2){
+            this.$alert(res.reMsg, '错误信息', {
+              confirmButtonText: '重新登录',
+              callback: action => {
+                this.$current.toLoginOut();
+              }
+            });
+            return false;
           }
-          if (this.module){
-            this.getModule(type);
+          let isMultiple = this.app == 'multiple'
+          let obj = res.reData.map(item => {
+            return {
+              menuId: item.ComFamId,
+              menuName: item.ComFamName
+            }
+          })
+          this.data3 = isMultiple ? [
+            { menuId: 'all', menuName: '全选', childrenList: obj }
+          ] : obj
+          if (type == 'init') {
+            const { appid } = this.$route.params
+            this.apps = appid ? appid : isMultiple ? [] : [this.data3[0].menuId]
+          } else {
+            this.apps = isMultiple ? [] : [this.data3[0].menuId]
           }
-
-        }).catch(err=>{
-          console.log(err);
+          this.$refs.apps.setCheckNodes(this.apps)
+          if (this.module) {
+            this.getModule(type)
+          }
+        }).catch(err => {
+          console.log(err)
         })
         // setTimeout(() => {
         //   this.data3 = menus4
@@ -223,64 +383,126 @@
         this.data4 = []
         this.modules = []
         request({
-          // url:'/Ashx/ISystemOverview.ashx',
-          url:'/modules',
-          data:{
-            ty:'GetComSel',
-            zml:1
+          url: URL,
+          data: {
+            ty: 'GetComFamModuleLst',
+            ComFamId: this.apps.join(','),
+            ComFamSource: this.apptypes.join(','),
           }
-        }).then(res=>{
-          if (type=='init'){
-            this.data4 = res.data
-            const {moduleid}=this.$route.params;
-            this.modules = moduleid?moduleid:this.module=='mutiple'?[]:[this.data4[0].menuId];
-            this.$refs.modules.setCheckNodes(this.modules)
-          }else {
-            this.data4 = res.data;
-            this.modules = this.module=='mutiple'?[]:[this.data4[0].menuId];
-            this.$refs.modules.setCheckNodes(this.modules)
+        }).then(res => {
+          if (res.reCode==2){
+            this.$alert(res.reMsg, '错误信息', {
+              confirmButtonText: '重新登录',
+              callback: action => {
+                this.$current.toLoginOut();
+              }
+            });
+            return false;
           }
-          // this.$refs.modules.setCheckNodes([1])
-
-        }).catch(err=>{
-          console.log(err);
+          let isMultiple = this.module == 'multiple'
+          let obj = res.reData.map(item => {
+            return {
+              menuId: item.ModuleId,
+              menuName: item.ModuleName
+            }
+          })
+          this.data4 = isMultiple ? [
+            { menuId: 'all', menuName: '全选', childrenList: obj }
+          ] : obj
+          if (type == 'init') {
+            const { moduleid } = this.$route.params
+            this.modules = moduleid ? moduleid : isMultiple ? [] : [this.data4[0].menuId]
+          } else {
+            this.modules = isMultiple ? [] : [this.data4[0].menuId]
+          }
+          this.$refs.modules.setCheckNodes(this.modules)
+        }).catch(err => {
+          console.log(err)
         })
-        // setTimeout(() => {
-        //   this.data4 = menus5
-        //   this.modules = []
-        // }, 3000)
+      },
+      getSearchTerms(type) {
+        this.data5 = this.showsearchterm == 'multiple' ? [
+          {
+            'menuId': 'all',
+            'menuName': '全选',
+            'childrenList': [
+              { 'menuId': 1, 'menuName': '软件名称' },
+              { 'menuId': 2, 'menuName': '安装路径' },
+              { 'menuId': 3, 'menuName': '卸载路径' }
+            ]
+          }
+        ] : [
+          { 'menuId': 1, 'menuName': '软件名称' },
+          { 'menuId': 2, 'menuName': '安装路径' },
+          { 'menuId': 3, 'menuName': '卸载路径' }
+        ]
+        if (type == 'init') {
+          const { searchtermid } = this.$route.params
+          this.searchTerms = searchtermid ? searchtermid : this.showsearchterm == 'multiple' ? [] : [this.data5[0].menuId]
+        } else {
+          this.searchTerms = this.showsearchterm == 'multiple' ? [] : [this.data5[0].menuId]
+        }
+        this.$refs.searchTermRef.setCheckNodes(this.searchTerms)
+      },
+      getIsUnstall(type) {
+        let isMultiple = false//此处不支持多选，未开放多选功能
+        // let isMultiple = this.showisunstall == 'multiple'
+        if (type == 'init') {
+          const { isUnstallid } = this.$route.params
+          this.isUnstall = isUnstallid ? isUnstallid : isMultiple ? [] : [this.data6[0].menuId]
+        } else {
+          this.isUnstall = isMultiple ? [] : [this.data6[0].menuId]
+        }
+        this.$refs.isUnstallRef.setCheckNodes(this.isUnstall)
+      },
+      getOvertimeType(type) {
+        let isMultiple = false//未开放多选功能
+        // let isMultiple=this.showisunstall == 'multiple'
+        if (type == 'init') {
+          const { overtimeType } = this.$route.params
+          this.overTimeType = overtimeType ? overtimeType : isMultiple ? [] : [this.data7[0].menuId]
+        } else {
+          this.overTimeType = isMultiple ? [] : [this.data7[0].menuId]
+        }
+        this.$refs.overTimeRef.setCheckNodes(this.overTimeType)
       },
       // 下拉菜单之间的联动关系管理
       changeCheck(node) {
+        let type = 'change'
         switch (node) {
           case 'com':
-            if (this.user) {
-              this.getUserLst('change');//
-            }
-            break;
+            if (this.dep) this.getDep(type)
+            if (!this.dep && this.user) this.getUserLst(type)
+            break
+          case 'dep':
+            if (this.user) this.getUserLst(type)
+            break
           case 'apptype':
-            if (this.app) {
-              this.getApp('change');//
-            }
-            break;
+            if (this.app)this.getApp(type);
+            if (!this.app&&this.module)this.getModule(type);
+            break
           case 'app':
-            if (this.module) {
-              this.getModule('change');//
-            }
-              break;
+            if (this.module) this.getModule(type)
+            break
         }
 
       },
-      // 向外输出结果
-      getSearchData(){
+      // 向外输出结果s
+      getSearchData() {
         return {
-          date:this.date,
-          time:this.date2,
-          coms:this.coms,
-          users:this.users,
-          apptypes:this.apptypes,
-          apps:this.apps,
-          modules:this.modules
+          coms: this.coms,
+          users: this.users,
+          apptypes: this.apptypes,
+          apps: this.apps,
+          modules: this.modules,
+          date: this.date,
+          date2: this.date2,
+          keywords: this.keywords,
+          searchTerms: this.searchTerms,
+          isUnstall: this.isUnstall,
+          userName: this.userName,
+          devName: this.devName,
+          overTimeType: this.overTimeType
         }
       }
     },
@@ -290,17 +512,29 @@
         this.getCom('init')
       }
       // 被联动数据，默认不在此初始加载,要写在联动管理里
-      if (this.user&&!this.com){
-        this.getUserLst('init');
+      if (this.dep && !this.com) {
+        this.getDep('init')
+      }
+      if (this.user && !this.com && !this.dep) {
+        this.getUserLst('init')
       }
       if (this.apptype) {
         this.getAppType('init')
       }
-      if (this.app&&!this.apptype) {
+      if (this.app && !this.apptype) {
         this.getApp('init')
       }
-      if (this.module&&!this.app){
-        this.getModule('init');
+      if (this.module && !this.app) {
+        this.getModule('init')
+      }
+      if (this.showsearchterm) {
+        this.getSearchTerms('init')
+      }
+      if (this.showisunstall) {
+        this.getIsUnstall('init')
+      }
+      if (this.showovertime) {
+        this.getOvertimeType('init')
       }
     }
   }

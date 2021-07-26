@@ -121,7 +121,7 @@
         options: [],
         selectedData: [], // 选中的节点
         style: 'width:' + (this.width - 20+100) + 'px;' + 'height:' + this.height + 'px;',
-        selectStyle: 'width:' + (this.width + 24) + 'px;',
+        selectStyle: 'width:' + (this.width-5) + 'px;',
         checkedIds: [],
         checkedData: [],
         checkedType: [],

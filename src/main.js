@@ -25,7 +25,11 @@ import './utils/error-log' // error log
 
 import * as filters from './filters' // global filters
 
-
+/**
+ * 自己写的 - 调用公共js，非admin原生自带
+ * */
+import currentJs from './js/current.js';
+Vue.prototype.$current=currentJs;
 
 
 

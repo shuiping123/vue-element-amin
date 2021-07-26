@@ -19,7 +19,7 @@
 <template>
   <div class="searchItem">
     <div class="mask" v-show="isShowSelect" @click="isShowSelect = !isShowSelect"></div>
-    <el-popover placement="bottom-start" :width="width+100" trigger="manual"
+    <el-popover placement="bottom-start" :width="width+100"  trigger="manual"
                 v-model="isShowSelect" @hide="popoverHide">
       <el-tree class="common-tree" :style="style" ref="tree" :data="data" :props="defaultProps"
                :show-checkbox="multiple"
@@ -121,7 +121,7 @@
         options: [],
         selectedData: [], // 选中的节点
         style: 'width:' + (this.width - 20 + 100) + 'px;' + 'height:' + this.height + 'px;',
-        selectStyle: 'width:' + (this.width + 24) + 'px;',
+        selectStyle: 'width:' + (this.width-5) + 'px;',
         checkedIds: [],
         checkedData: [],
         checkedType: [],
