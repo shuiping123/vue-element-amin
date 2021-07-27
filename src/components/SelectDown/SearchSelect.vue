@@ -115,6 +115,7 @@
                           :checkData.sync="overTimeType"
                           placeholder="请选择超时时间范围"
                           :checkedKeys="overTimeType"></select-down-normal>
+
     </div>
     <!--    <p>{{date}}</p>-->
     <!--    <p>{{date2}}</p>-->
@@ -136,7 +137,8 @@
 
   export default {
     name: 'searchSelect',
-    props: ['showdate', 'showtime', 'com', 'user',
+    props: [
+      'showdate', 'showtime', 'com', 'user',
       'apptype', 'app', 'module', 'showkeywords',
       'showsearchterm', 'showisunstall', 'showusername', 'showdevname',
       'showovertime', 'dep'],

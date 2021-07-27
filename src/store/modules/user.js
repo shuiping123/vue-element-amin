@@ -1,9 +1,11 @@
-import { login, logout, getInfo } from '@/api/user'
+import { login, logout, getInfo, checklog } from '@/api/user'
 import { getToken, setToken, removeToken } from '@/utils/auth'
 import router, { resetRouter } from '@/router'
+import {Message} from "element-ui";
 
 const state = {
-  token: getToken(),
+  token: 'admin-token',
+  // token: getToken(),
   name: '',
   avatar: '',
   introduction: '',
@@ -31,13 +33,17 @@ const mutations = {
 const actions = {
   // user login
   login({ commit }, userInfo) {
-    const { username, password } = userInfo
+    const { username, password, verifycode } = userInfo
     return new Promise((resolve, reject) => {
-      login({ username: username.trim(), password: password }).then(response => {
-        const { data } = response
-        commit('SET_TOKEN', data.token)
-        setToken(data.token)
-        resolve()
+      login({ OprName: username.trim(), PassWord: password, YZM: verifycode, zml: 11 }).then(response => {
+        // const { data } = response
+        const data = response
+        // commit('SET_TOKEN', data.token)
+        // setToken(data.token)
+        // resolve()
+        commit('SET_TOKEN', 'admin-token')
+        setToken('admin-token')
+        resolve(response)
       }).catch(error => {
         reject(error)
       })
@@ -75,7 +81,7 @@ const actions = {
   // user logout
   logout({ commit, state, dispatch }) {
     return new Promise((resolve, reject) => {
-      logout(state.token).then(() => {
+      logout().then(() => {
         commit('SET_TOKEN', '')
         commit('SET_ROLES', [])
         removeToken()
@@ -99,6 +105,27 @@ const actions = {
       commit('SET_ROLES', [])
       removeToken()
       resolve()
+    })
+  },
+
+  checkLog({ commit, state, dispatch }) {
+    return new Promise((resolve, reject) => {
+      checklog().then((res) => {
+        if (res.reCode != 0) {
+          Message({
+            message:res.reMsg,
+            type:'error',
+            duration:2000,
+            async onClose(){
+              // dispatch('logout')
+              await dispatch('logout')
+              router.push(`/login?redirect=${router.fullPath}`)
+            }
+          })
+        }
+      }).catch(error => {
+        reject(error)
+      })
     })
   },
 

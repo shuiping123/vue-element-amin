@@ -13,6 +13,7 @@ export default {
         name: urlName,
         params: {
           comid: id,
+          depid:[-2]
         }
       })
       this.$store.dispatch('tagsView/addView', this.$route)

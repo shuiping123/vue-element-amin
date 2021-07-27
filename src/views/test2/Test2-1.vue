@@ -15,11 +15,15 @@ export default {
   },
   created() {
     this.getId()
+
+  },
+  mounted() {
+    this.$store.dispatch('user/checkLog')
+
   },
   methods: {
     getId() {
       var { id } = this.$route.params
-      console.log(this.$route)
       if (id) {
         this.id = id
       }
