@@ -19,7 +19,7 @@
 <template>
   <div class="searchItem">
     <div class="mask" v-show="isShowSelect" @click="isShowSelect = !isShowSelect"></div>
-    <el-popover placement="bottom-start" :width="width+100"  trigger="manual"
+    <el-popover placement="bottom-start" :width="width+100" trigger="manual"
                 v-model="isShowSelect" @hide="popoverHide">
       <el-tree class="common-tree" :style="style" ref="tree" :data="data" :props="defaultProps"
                :show-checkbox="multiple"
@@ -121,7 +121,7 @@
         options: [],
         selectedData: [], // 选中的节点
         style: 'width:' + (this.width - 20 + 100) + 'px;' + 'height:' + this.height + 'px;',
-        selectStyle: 'width:' + (this.width-5) + 'px;',
+        selectStyle: 'width:' + (this.width - 5) + 'px;',
         checkedIds: [],
         checkedData: [],
         checkedType: [],
@@ -199,76 +199,82 @@
             return item.menuId
           })
           this.value = keyArr
-          this.$emit('changeCheck')
+          setTimeout(()=>this.$emit('changeCheck'),200)
         }
       },
       setCheckNodes(keys) {
         if (this.multiple) {
+          this.$refs.tree.setCheckedKeys(keys)
           setTimeout(() => {
-            if (keys.length > 0) {
-              let Tree = this.$refs.tree
-              keys.map(item => {
-                var ChildArr = Tree.getNode(item).childNodes//子节点的集合
-                // 有子节点,now=>父节点
-                if (ChildArr.length !== 0) {
-                  var checkedKeys = this.$refs.tree.getCheckedKeys(); // 所有被选中的节点的 key 所组成的数组数据
-
-                  (function xunhuan(item) {
-                    item.map((child) => {
-                      // console.log(child)
-                      if (child.childNodes.length !== 0) {
-                        checkedKeys.push(child.key)
-                        xunhuan(child.childNodes)
-                      } else {
-                        checkedKeys.push(child.key)
-                      }
-                    })
-                  }(ChildArr))
-
-                  checkedKeys.push(item)
-                  this.$refs.tree.setCheckedKeys(checkedKeys)
-
-                  this.options = checkedKeys.map((item) => {
-                    var node = this.$refs.tree.getNode(item) // 所有被选中的节点对应的node
-                    let tmpMap = {}
-                    tmpMap.value = node.key
-                    tmpMap.label = node.label
-                    return tmpMap
-                  })
-                  this.selectedData = keys.map((item) => {
-                    var node = this.$refs.tree.getNode(item) // 所有被选中的节点对应的node
-                    return node.label
-                  })
-
-                } else {
-                  this.$refs.tree.setCheckedKeys(keys)
-                  this.options = keys.map(item => {
-                    var node = this.$refs.tree.getNode(item) // 所有被选中的节点对应的node
-                    let tmpMap = {}
-                    tmpMap.value = node.key
-                    tmpMap.label = node.label
-                    return tmpMap
-                  })
-                  this.selectedData = this.options.map((item) => {
-                    return item.label
-                  })
-                }
-              })
-
-            } else {
-              this.$refs.tree.setCheckedKeys(keys)
-              this.selectedData = []
-            }
+            this.selectedData=this.$refs.tree.getCheckedNodes(false,false).map(item=>{
+              return item.menuName;
+            })
           }, 200)
+          // setTimeout(() => {
+          //   if (keys.length > 0) {
+          //     let Tree = this.$refs.tree
+          //     keys.map(item => {
+          //       var ChildArr = Tree.getNode(item).childNodes//子节点的集合
+          //       // 有子节点,now=>父节点
+          //       if (ChildArr.length !== 0) {
+          //         var checkedKeys = this.$refs.tree.getCheckedKeys(); // 所有被选中的节点的 key 所组成的数组数据
+          //
+          //         (function xunhuan(item) {
+          //           item.map((child) => {
+          //             // console.log(child)
+          //             if (child.childNodes.length !== 0) {
+          //               checkedKeys.push(child.key)
+          //               xunhuan(child.childNodes)
+          //             } else {
+          //               checkedKeys.push(child.key)
+          //             }
+          //           })
+          //         }(ChildArr))
+          //
+          //         checkedKeys.push(item)
+          //         this.$refs.tree.setCheckedKeys(checkedKeys)
+          //
+          //         this.options = checkedKeys.map((item) => {
+          //           var node = this.$refs.tree.getNode(item) // 所有被选中的节点对应的node
+          //           let tmpMap = {}
+          //           tmpMap.value = node.key
+          //           tmpMap.label = node.label
+          //           return tmpMap
+          //         })
+          //         this.selectedData = keys.map((item) => {
+          //           var node = this.$refs.tree.getNode(item) // 所有被选中的节点对应的node
+          //           return node.label
+          //         })
+          //
+          //       } else {
+          //         this.$refs.tree.setCheckedKeys(keys)
+          //         this.options = keys.map(item => {
+          //           var node = this.$refs.tree.getNode(item) // 所有被选中的节点对应的node
+          //           let tmpMap = {}
+          //           tmpMap.value = node.key
+          //           tmpMap.label = node.label
+          //           return tmpMap
+          //         })
+          //         this.selectedData = this.options.map((item) => {
+          //           return item.label
+          //         })
+          //       }
+          //     })
+          //
+          //   } else {
+          //     this.$refs.tree.setCheckedKeys(keys)
+          //     this.selectedData = []
+          //   }
+          // }, 200)
         } else {
           setTimeout(() => {
             this.$refs.tree.setCheckedKeys(keys)
             if (keys.length > 0) {
-              this.selectedData=this.$refs.tree.getNode(keys[0]).label;
+              this.selectedData = this.$refs.tree.getNode(keys[0]).label
             } else {
               this.selectedData = ''
             }
-          }, 500)
+          }, 200)
         }
       }
     },

@@ -25,7 +25,7 @@ export function getInfo(token) {
 
 export function logout() {
   return request({
-    url: 'Ashx/Index.ashx?ty=signOut&time='+new Date(),
+    url: '/Ashx/Index.ashx?ty=signOut&time='+new Date(),
     method: 'get'
   })
 }

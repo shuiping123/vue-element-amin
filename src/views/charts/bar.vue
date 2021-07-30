@@ -1,5 +1,5 @@
 <template>
-  <div class="bar" />
+  <div class="bar chartDiv" />
 </template>
 
 <script>
@@ -37,6 +37,7 @@ export default {
       console.log(this.watchLoad)
 
       if (this.watchLoad) {
+        _this.myChart.setOption({},true);
         _this.myChart.showLoading({
           text: '数据正在加载...',
           textStyle: { fontSize: 30, color: '#444' },
@@ -115,8 +116,5 @@ export default {
 </script>
 
 <style>
-  .bar{
-    width:100%;
-    height:300px;
-  }
+
 </style>

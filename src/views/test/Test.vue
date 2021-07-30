@@ -1,51 +1,29 @@
 <template>
   <div>
-    <div id="testId" />
-    <button @click="targetToAddTags('test2-1',5)">增加页面</button>
-    <button @click="refreshEcharts()">刷新图表，不刷页面</button>
-    <bar :loading="loading" />
-    <bar :loading="loading" />
+  <div class="itemDiv"><bar :loading="loading" /></div>
+  <div class="itemDiv"><pie-chart :loading="loading"></pie-chart></div>
     <button type="button" @click="changeLoading">刷新2</button>
   </div>
 </template>
 
 <script>
-import { barFun, showLoadingForEcharts } from '../../components/Echarts'
 import bar from './../charts/bar'
+import pieChart from '../charts/pieChart'
 
 export default {
   name: 'Test',
   components: {
-    bar
+    bar,
+    pieChart
   },
   data: function() {
     return {
-      echarts: {
-        barEcharts: null
-      },
-      loading: false
+      loading: true
     }
   },
   mounted() {
-    this.echarts.barEcharts = barFun('testId', this.echarts.barEcharts)
   },
   methods: {
-    targetToAddTags(urlName, id) {
-      this.$router.push({
-        name: urlName,
-        params: {
-          id: id
-        }
-      })
-      this.$store.dispatch('tagsView/addView', this.$route)
-    },
-    refreshEcharts() {
-      const _this = this
-      showLoadingForEcharts(_this.echarts.barEcharts)
-      setTimeout(() => {
-        barFun('testId', _this.echarts.barEcharts)
-      }, 3000)
-    },
     changeLoading() {
       this.loading = true
       setTimeout(() => {
@@ -57,10 +35,9 @@ export default {
 </script>
 
 <style>
-  #testId {
-    /*color: red;*/
+  @import "./../../assets/css/current.css";
+  .itemDiv{
     width: 100%;
     height: 300px;
-    /*background: red;*/
   }
 </style>

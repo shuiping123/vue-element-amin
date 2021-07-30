@@ -82,7 +82,8 @@ export const constantRoutes = [
         meta: { title: '仪表盘', icon: 'dashboard', affix: true }
       }
     ]
-  }
+  },
+
 ]
 
 /**
@@ -90,6 +91,7 @@ export const constantRoutes = [
  * the routes that need to be dynamically loaded based on user roles
  */
 export const asyncRoutes = [
+
   {
     path: '/icon',
     component: Layout,
@@ -174,14 +176,15 @@ export const asyncRoutes = [
   // tableRouter,
 
   // 404 page must be placed at the end !!!
-  { path: '*', redirect: '/', hidden: true }
+  // { path: '*', redirect: '/', hidden: true }
   // { path: '*', redirect: '/404', hidden: true }
 ]
 
 const createRouter = () => new Router({
   // mode: 'history', // require service support
   scrollBehavior: () => ({ y: 0 }),
-  routes: constantRoutes
+  routes: constantRoutes,
+  mode:'history'
 })
 
 const router = createRouter()

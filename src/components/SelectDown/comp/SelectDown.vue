@@ -193,7 +193,7 @@
           this.value = this.options.map(item => {
             return item.value;
           });
-        this.$emit('changeCheck')
+          setTimeout(()=>this.$emit('changeCheck'),200)
         }
       },
       handleCheckChange() {
@@ -321,7 +321,7 @@
           this.value = arr.map(item => {
             return item.value;
           })
-          this.$emit('changeCheck')
+          setTimeout(()=>this.$emit('changeCheck'),200)
         }
       },
       setCheckNodes(keys){

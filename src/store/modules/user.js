@@ -36,13 +36,10 @@ const actions = {
     const { username, password, verifycode } = userInfo
     return new Promise((resolve, reject) => {
       login({ OprName: username.trim(), PassWord: password, YZM: verifycode, zml: 11 }).then(response => {
-        // const { data } = response
-        const data = response
-        // commit('SET_TOKEN', data.token)
-        // setToken(data.token)
-        // resolve()
-        commit('SET_TOKEN', 'admin-token')
-        setToken('admin-token')
+        if (response.reCode==0){
+          commit('SET_TOKEN', 'admin-token')
+          setToken('admin-token')
+        }
         resolve(response)
       }).catch(error => {
         reject(error)
@@ -82,7 +79,7 @@ const actions = {
   logout({ commit, state, dispatch }) {
     return new Promise((resolve, reject) => {
       logout().then(() => {
-        commit('SET_TOKEN', '')
+        commit('SET_TOKEN', 'admin-token')
         commit('SET_ROLES', [])
         removeToken()
         resetRouter()
@@ -101,7 +98,7 @@ const actions = {
   // remove token
   resetToken({ commit }) {
     return new Promise(resolve => {
-      commit('SET_TOKEN', '')
+      commit('SET_TOKEN', 'admin-token')
       commit('SET_ROLES', [])
       removeToken()
       resolve()
@@ -119,7 +116,8 @@ const actions = {
             async onClose(){
               // dispatch('logout')
               await dispatch('logout')
-              router.push(`/login?redirect=${router.fullPath}`)
+
+              router.app.$router.push(`/login?redirect=${router.app.$route.fullPath}`)
             }
           })
         }
@@ -131,12 +129,14 @@ const actions = {
 
   // dynamically modify permissions
   async changeRoles({ commit, dispatch }, role) {
-    const token = role + '-token'
+    const token = 'admin-token'
+    // const token = role + '-token'
 
     commit('SET_TOKEN', token)
     setToken(token)
 
     const { roles } = await dispatch('getInfo')
+    console.log(roles)
 
     resetRouter()
 

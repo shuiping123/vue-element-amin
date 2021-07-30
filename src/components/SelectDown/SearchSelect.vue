@@ -2,7 +2,7 @@
   <div>
     <div class="searchDiv">
       <!--时间选择-->
-      <time-choose v-if="showdate" ref="datetime" type="datetimerange" :value.sync="date"></time-choose>
+      <time-choose v-if="showdate" ref="datetime" :type="showdate" :value.sync="date"></time-choose>
       <!--时间选择-->
       <time-choose v-if="showtime" ref="datetime" type="timerange" :value.sync="date2"></time-choose>
       <!--单位选择-->
@@ -115,6 +115,13 @@
                           :checkData.sync="overTimeType"
                           placeholder="请选择超时时间范围"
                           :checkedKeys="overTimeType"></select-down-normal>
+      <!--查询按钮-->
+      <div class="searchItem">
+        <el-button type="primary" icon="el-icon-search" @click="SearchAction">查询</el-button>
+      </div>
+      <div class="searchItem">
+        <el-button type="primary" icon="el-icon-s-order">导出EXCEL</el-button>
+      </div>
 
     </div>
     <!--    <p>{{date}}</p>-->
@@ -191,24 +198,26 @@
         // this.data = []
         // this.coms = []
         request({
-          // url:'/Ashx/ISystemOverview.ashx',
-          url: '/coms',
-          data: {
-            // ty: 'GetComSel',
-            zml: 1
+          url:URL,
+          // url: '/coms',
+          params: {
+            ty: 'GetComTree_Vue',
+            // zml: 1
           }
         }).then(res => {
-          if (type == 'init') {
-            this.data = res
-            const { comid } = this.$route.params
-            this.coms = comid ? comid : this.com == 'multiple' ? [] : [this.data[0].menuId]
-            this.$refs.coms.setCheckNodes(this.coms)
-          } else {
-
-            this.data = res
-            this.coms = this.com == 'multiple' ? [] : [this.data[0].menuId]
-            this.$refs.coms.setCheckNodes(this.coms)
+          if (res.reCode!=0){
+            return false;
           }
+          let isMultiple=this.com == 'multiple'
+
+          this.data = res.reData
+          if (type == 'init') {
+            const { comid } = this.$route.params
+            this.coms = comid ? comid : isMultiple ? [] : [this.data[0].menuId]
+          } else {
+            this.coms = isMultiple ? [] : [this.data[0].menuId]
+          }
+          this.$refs.coms.setCheckNodes(this.coms)
           if (this.dep) {
             this.getDep(type)
           }
@@ -223,7 +232,7 @@
         this.deps = []
         request({
           url: URL,
-          data: {
+          params: {
             ty: 'GetDepSel',
             ComId: this.coms.join(',')
           }
@@ -232,7 +241,7 @@
             this.$alert(res.reMsg, '错误信息', {
               confirmButtonText: '重新登录',
               callback: action => {
-                this.$current.toLoginOut();
+                this.$current.toLoginOut(this);
               }
             });
             return false;
@@ -253,12 +262,15 @@
           ] : obj
           if (type == 'init') {
             const { depid } = this.$route.params
-            this.deps = depid ? depid : isMultiple ? [] : [this.data2[0].menuId]
+            this.deps = depid ? depid : isMultiple ? [] : [this.dataForDep[0].menuId]
           } else {
-            this.deps = isMultiple ? [] : [this.data2[0].menuId]
+            this.deps = isMultiple ? [] : [this.dataForDep[0].menuId]
           }
           this.$refs.depRef.setCheckNodes(this.deps)
-          if (this.user) this.getUserLst(type)
+          if (this.user) {
+
+            this.getUserLst(type)
+          }
 
         }).catch(err => {
           console.log(err)
@@ -269,7 +281,7 @@
         this.users = []
         request({
           url: URL,
-          data: {
+          params: {
             ty: 'GetComUsrSel',
             ComId: this.coms.join(','),
             DepId: this.deps.join(',')
@@ -279,7 +291,7 @@
             this.$alert(res.reMsg, '错误信息', {
               confirmButtonText: '重新登录',
               callback: action => {
-                this.$current.toLoginOut();
+                this.$current.toLoginOut(this);
               }
             });
             return false;
@@ -297,7 +309,8 @@
               menuName: '全选',
               childrenList: obj
             }
-          ] : obj
+          ]: obj;
+
           if (type == 'init') {
             const { usrid } = this.$route.params
             this.users = usrid ? usrid : isMultiple ? [] : [this.data2[0].menuId]
@@ -339,7 +352,7 @@
         this.apps = []
         request({
           url: URL,
-          data: {
+          params: {
             ty: 'GetComFamSel',
           }
         }).then(res => {
@@ -347,7 +360,7 @@
             this.$alert(res.reMsg, '错误信息', {
               confirmButtonText: '重新登录',
               callback: action => {
-                this.$current.toLoginOut();
+                this.$current.toLoginOut(this);
               }
             });
             return false;
@@ -386,7 +399,7 @@
         this.modules = []
         request({
           url: URL,
-          data: {
+          params: {
             ty: 'GetComFamModuleLst',
             ComFamId: this.apps.join(','),
             ComFamSource: this.apptypes.join(','),
@@ -396,7 +409,7 @@
             this.$alert(res.reMsg, '错误信息', {
               confirmButtonText: '重新登录',
               callback: action => {
-                this.$current.toLoginOut();
+                this.$current.toLoginOut(this);
               }
             });
             return false;
@@ -470,6 +483,7 @@
       },
       // 下拉菜单之间的联动关系管理
       changeCheck(node) {
+        console.log(node)
         let type = 'change'
         switch (node) {
           case 'com':
@@ -477,6 +491,7 @@
             if (!this.dep && this.user) this.getUserLst(type)
             break
           case 'dep':
+            console.log(this.deps)
             if (this.user) this.getUserLst(type)
             break
           case 'apptype':
@@ -493,6 +508,7 @@
       getSearchData() {
         return {
           coms: this.coms,
+          deps: this.deps,
           users: this.users,
           apptypes: this.apptypes,
           apps: this.apps,
@@ -506,6 +522,10 @@
           devName: this.devName,
           overTimeType: this.overTimeType
         }
+      },
+      // 查询执行的函数
+      SearchAction(){
+        this.$emit('searchAction')
       }
     },
     mounted() {

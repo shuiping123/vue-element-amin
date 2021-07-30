@@ -4,6 +4,9 @@ export function request(config) {
   const instance = axios.create({
     method: 'post',
     withCredentials: true,
+    headers:{
+        'Content-Type': ' application/x-www-form-urlencoded',
+    },
     // headers: {
     //   'Access-Control-Allow-Headers': 'x-requested-with,content-type',
     //   'Access-Control-Allow-Methods': 'OPTIONS,POST,GET',

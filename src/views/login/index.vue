@@ -200,30 +200,33 @@
               verifycode:this.loginForm.verifycode
             })
               .then(res => {
-                if (res.reCode==0){
-                  this.$router.push({ path: this.redirect || '/', query: this.otherQuery })
-                  this.loading = false
-                }else if (res.reCode==1){
+                this.loading = false
+                if (res.reCode==1){
                   this.$message({
                     message:res.reMsg,
                     type:'error'
                   });
+                  return false;
                 }else if (res.reCode==2){
+                  let _this=this;
                   this.$message({
                     message:res.reMsg,
                     type:'error',
                     onClose(){
-                      window.location.reload();
+                      _this.getCode();
                     }
                   });
+                  return false;
+                }else if (res.reCode==0){
+                  this.$router.push({ path: this.redirect || '/', query: this.otherQuery })
                 }
-
               })
               .catch(() => {
                 this.loading = false
+                return false
               })
           } else {
-            console.log('error submit!!')
+            console.log('验证失败，请检查格式')
             return false
           }
         })
@@ -271,7 +274,6 @@
             this.randomNum(0, this.identifyCodes.length)
             ]
         }
-        console.log(this.identifyCode)
       },
       getCode(){
         // request({

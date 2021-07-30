@@ -1,6 +1,6 @@
 <template>
   <div>
-    <button @click="targetToAddTags('test2-3',[100])">跳转2-2</button>
+    <button @click="targetToAddTags('test2-3',[1])">跳转2-2</button>
   </div>
 </template>
 
