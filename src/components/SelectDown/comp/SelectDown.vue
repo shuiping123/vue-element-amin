@@ -18,9 +18,37 @@
 -->
 <template>
   <div class="searchItem">
-    <div class="mask" v-show="isShowSelect" @click="isShowSelect = !isShowSelect"></div>
-    <el-popover placement="bottom-start" :width="width+100" trigger="manual"
-                v-model="isShowSelect" @hide="popoverHide">
+<!--    <div class="mask" v-show="isShowSelect" @click="isShowSelect = !isShowSelect"></div>-->
+<!--    <el-popover placement="bottom-start" :width="width+100" trigger="manual"-->
+<!--                v-model="isShowSelect" @hide="popoverHide">-->
+<!--      <el-tree class="common-tree" :style="style" ref="tree" :data="data" :props="defaultProps"-->
+<!--               :show-checkbox="multiple"-->
+<!--               :node-key="nodeKey"-->
+<!--               :check-strictly="checkStrictly"-->
+<!--               default-expand-all-->
+<!--               :expand-on-click-node="false"-->
+<!--               :default-checked-keys="defaultCheckedKeys"-->
+<!--               :highlight-current="true"-->
+<!--               :check-on-click-node="multiple?false:true"-->
+<!--               @node-click="handleNodeClick"-->
+<!--               @check="handleCheck"-->
+<!--               @check-change="handleCheckChange"></el-tree>-->
+<!--      <el-select :style="selectStyle" slot="reference" ref="select"-->
+<!--                 style="overflow: hidden"-->
+<!--                 v-model="selectedData"-->
+<!--                 :placeholder="placeholder"-->
+<!--                 :collapse-tags="true"-->
+<!--                 :multiple="multiple"-->
+<!--                 @click.native="isShowSelect = !isShowSelect"-->
+<!--                 class="tree-select">-->
+<!--        <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value"></el-option>-->
+<!--      </el-select>-->
+<!--    </el-popover>-->
+
+    <el-popover
+      placement="bottom-start"
+      :width="width+100"
+      trigger="focus">
       <el-tree class="common-tree" :style="style" ref="tree" :data="data" :props="defaultProps"
                :show-checkbox="multiple"
                :node-key="nodeKey"
@@ -33,17 +61,14 @@
                @node-click="handleNodeClick"
                @check="handleCheck"
                @check-change="handleCheckChange"></el-tree>
-      <el-select :style="selectStyle" slot="reference" ref="select"
-                 style="overflow: hidden"
-                 v-model="selectedData"
-                 :placeholder="placeholder"
-                 :collapse-tags="true"
-                 :multiple="multiple"
-                 @click.native="isShowSelect = !isShowSelect"
-                 class="tree-select">
-        <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value"></el-option>
-      </el-select>
+      <el-input slot="reference"
+                :style="{width: width}"
+                :placeholder="placeholder"
+                ref="select"
+                v-model="selectedData.toString()"></el-input>
     </el-popover>
+
+
   </div>
 </template>
 

@@ -1,7 +1,7 @@
 <template>
   <div style="width:100%">
     <div class="searchDiv">
-      <search-select ref="searchSelect" com="single" showdate="daterange" app="single" dep="multiple"
+      <search-select ref="searchSelect" com="single" showdate="daterange" app="multiple" dep="multiple"
                      @searchAction="searchLoad"
       ></search-select>
     </div>

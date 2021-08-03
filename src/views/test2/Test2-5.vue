@@ -1,379 +1,339 @@
+<!--
+    /**
+     * 下拉选择树形组件，下拉框展示树形结构，提供选择某节点功能，方便其他模块调用
+     * @author ljn
+     * @date 2019-02-23
+     * 调用示例：
+     * <tree-select :height="400" // 下拉框中树形高度
+     *              :width="200" // 下拉框中树形宽度
+     *              :data="data" // 树结构的数据
+     *              :defaultProps="defaultProps" // 树结构的props
+     *              multiple   // 多选
+     *              checkStrictly // 多选时，严格遵循父子不互相关联
+     *              :nodeKey="nodeKey"   // 绑定nodeKey，默认绑定'id'
+     *              :checkedKeys="defaultCheckedKeys"  // 传递默认选中的节点key组成的数组
+     *              @popoverHide="popoverHide"> // 事件有两个参数：第一个是所有选中的节点ID，第二个是所有选中的节点数据
+     *              </tree-select>
+     */
+-->
 <template>
-  <div class="login-container">
-    <el-form ref="loginForm" :model="loginForm" :rules="loginRules" class="login-form" autocomplete="on"
-             label-position="left">
+  <div class="searchItem">
+<!--    <div class="mask" v-show="isShowSelect" @click="isShowSelect = !isShowSelect"></div>-->
+<!--    <el-popover placement="bottom-start" :width="width+100" trigger="manual"-->
+<!--                v-model="isShowSelect" @hide="popoverHide">-->
+<!--      <el-tree class="common-tree" :style="style" ref="tree" :data="data" :props="defaultProps"-->
+<!--               :show-checkbox="multiple"-->
+<!--               :node-key="nodeKey"-->
+<!--               :check-strictly="checkStrictly"-->
+<!--               default-expand-all-->
+<!--               :check-on-click-node="multiple?false:true"-->
+<!--               :expand-on-click-node="false"-->
+<!--               :default-checked-keys="defaultCheckedKeys"-->
+<!--               :highlight-current="true"-->
+<!--               @node-click="handleNodeClick"-->
+<!--               @check="handleCheck"-->
+<!--               @check-change="handleCheckChange"></el-tree>-->
+<!--      <el-select :style="selectStyle" slot="reference" ref="select"-->
+<!--                 v-model="selectedData"-->
+<!--                 :multiple="multiple"-->
+<!--                 :collapse-tags="true"-->
+<!--                 :placeholder="placeholder"-->
+<!--                 @click.native="isShowSelect = !isShowSelect"-->
+<!--                 class="tree-select">-->
+<!--        <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value"></el-option>-->
+<!--      </el-select>-->
+<!--    </el-popover>-->
 
-      <div class="title-container">
-        <h3 class="title">Login Form</h3>
-      </div>
 
-      <el-form-item prop="username">
-        <span class="svg-container">
-          <svg-icon icon-class="user"/>
-        </span>
-        <el-input
-          ref="username"
-          v-model="loginForm.username"
-          placeholder="Username"
-          name="username"
-          type="text"
-          tabindex="1"
-          autocomplete="on"
-        />
-      </el-form-item>
+    <el-popover
+      placement="bottom"
+      :width="width+100"
+      trigger="focus">
+      <el-tree class="common-tree" :style="style" ref="tree" :data="data" :props="defaultProps"
+               :show-checkbox="multiple"
+               :node-key="nodeKey"
+               :check-strictly="checkStrictly"
+               default-expand-all
+               :check-on-click-node="multiple?false:true"
+               :expand-on-click-node="false"
+               :default-checked-keys="defaultCheckedKeys"
+               :highlight-current="true"
+               @node-click="handleNodeClick"
+               @check="handleCheck"
+               @check-change="handleCheckChange"></el-tree>
+      <el-input slot="reference" style="width: 200px"></el-input>
+      <!--      <el-button slot="reference">click 激活</el-button>-->
+    </el-popover>
 
-      <el-tooltip v-model="capsTooltip" content="Caps lock is On" placement="right" manual>
-        <el-form-item prop="password">
-          <span class="svg-container">
-            <svg-icon icon-class="password"/>
-          </span>
-          <el-input
-            :key="passwordType"
-            ref="password"
-            v-model="loginForm.password"
-            :type="passwordType"
-            placeholder="Password"
-            name="password"
-            tabindex="2"
-            autocomplete="on"
-            @keyup.native="checkCapslock"
-            @blur="capsTooltip = false"
-            @keyup.enter.native="handleLogin"
-          />
-          <span class="show-pwd" @click="showPwd">
-            <svg-icon :icon-class="passwordType === 'password' ? 'eye' : 'eye-open'"/>
-          </span>
-        </el-form-item>
-      </el-tooltip>
 
-        
-      <el-row class="identifybox">
-        <el-col :span="8">
-          <div @click="refreshCode">
-            <cap-code :identifyCode="identifyCode"></cap-code>
-          </div>
-          <el-button @click="refreshCode" type='text' class="textbtn">看不清，换一张</el-button>
-        </el-col>
-        <el-col :span="16">
-          <el-form-item>
-            <el-input
-              ref="username"
-              v-model="loginForm.verifycode"
-              placeholder="请输入验证码"
-              name="verifycode"
-              type="text"
-              tabindex="1"
-              autocomplete="on"
-            />
-          </el-form-item>
-        </el-col>
-      </el-row>
-
-       
-
-      <el-button :loading="loading" type="primary" style="width:100%;margin-bottom:30px;margin-top:20px"
-                 @click.native.prevent="handleLogin">登录
-      </el-button>
-
-    </el-form>
-
-    <el-dialog title="Or connect with" :visible.sync="showDialog">
-      Can not be simulated on local, so please combine you own business simulation! ! !
-      <br>
-      <br>
-      <br>
-      <social-sign/>
-    </el-dialog>
   </div>
 </template>
 
 <script>
-  import { validUsername } from '@/utils/validate'
-  import SocialSign from './../login/components/SocialSignin'
-  import capCode from './../login/components/code'
 
   export default {
-    name: 'Login',
-    components: { SocialSign, capCode },
+    name: 'tree-select',
+    props: {
+      // 树结构数据
+      data: {
+        type: Array,
+        default() {
+          return []
+        }
+      },
+      placeholder: {
+        type: String,
+        default() {
+          return '请选择'
+        }
+      },
+      defaultProps: {
+        type: Object,
+        default() {
+          return {
+            children: 'childrenList',
+            label: 'menuName'
+          }
+        }
+      },
+      // 配置是否可多选
+      multiple: {
+        type: Boolean,
+        default() {
+          return false
+        }
+      },
+      nodeKey: {
+        type: String,
+        default() {
+          return 'menuId'
+        }
+      },
+      // 显示复选框情况下，是否严格遵循父子不互相关联
+      checkStrictly: {
+        type: Boolean,
+        default() {
+          return false//默认不关联 true:不关联  false:关联
+        }
+      },
+      // 默认选中的节点key数组
+      checkedKeys: {
+        type: Array,
+        default() {
+          return []
+        }
+      },
+      width: {
+        type: Number,
+        default() {
+          return 200
+        }
+      },
+      height: {
+        type: Number,
+        default() {
+          return 300
+        }
+      },
+      checkData: {}
+    },
     data() {
-      const validateUsername = (rule, value, callback) => {
-        if (!validUsername(value)) {
-          callback(new Error('Please enter the correct user name'))
-        } else {
-          callback()
-        }
-      }
-      const validatePassword = (rule, value, callback) => {
-        if (value.length < 6) {
-          callback(new Error('The password can not be less than 6 digits'))
-        } else {
-          callback()
-        }
-      }
-      // 验证码自定义验证规则
-      const validateVerifycode = (rule, value, callback) => {
-        if (value === '') {
-          callback(new Error('请输入验证码'))
-        } else if (value !== this.identifyCode) {
-          console.log('validateVerifycode:', value)
-          callback(new Error('验证码不正确!'))
-        } else {
-          callback()
-        }
-      }
       return {
-        loginForm: {
-          username: 'admin',
-          password: '111111',
-          verifycode: ''
-        },
-        checked: false,
-        identifyCodes: '1234567890',
-        identifyCode: '',
-        loginRules: {
-          username: [{ required: true, trigger: 'blur', validator: validateUsername }],
-          password: [{ required: true, trigger: 'blur', validator: validatePassword }]
-        },
-        passwordType: 'password',
-        capsTooltip: false,
-        loading: false,
-        showDialog: false,
-        redirect: undefined,
-        otherQuery: {}
+        defaultCheckedKeys: [],
+        isShowSelect: false, // 是否显示树状选择器
+        options: [],
+        selectedData: [], // 选中的节点
+        style: 'width:' + (this.width - 20 + 100) + 'px;' + 'height:' + this.height + 'px;',
+        selectStyle: 'width:' + (this.width - 5) + 'px;',
+        checkedIds: [],
+        checkedData: [],
+        checkedType: [],
+        value: []
+      }
+    },
+    mounted() {
+      // this.defaultCheckedKeys = []
+      // this.selectedData = []
+      // this.value = []
+      if (this.checkedKeys.length > 0) {
+        if (this.multiple) {
+          this.defaultCheckedKeys = this.checkedKeys
+          this.selectedData = this.checkedKeys.map((item) => {
+            var node = this.$refs.tree.getNode(item)
+            return node.label
+          })
+          this.value = this.checkedKeys
+
+        } else {
+          var item = this.checkedKeys[0]
+          this.$refs.tree.setCurrentKey(item)
+          var node = this.$refs.tree.getNode(item)
+          this.selectedData = node.label
+          this.value = this.checkedKeys
+        }
+      }
+      // this.$emit('changeCheck')
+    },
+    methods: {
+      popoverHide() {
+        if (this.multiple) {
+          this.checkedIds = this.$refs.tree.getCheckedKeys() // 所有被选中的节点的 key 所组成的数组数据
+          this.checkedData = this.$refs.tree.getCheckedNodes() // 所有被选中的节点所组成的数组数据
+          this.checkedType = this.$refs.tree.getCheckedNodes() // 所有被选中的节点所组成的数组数据
+        } else {
+          this.checkedIds = this.$refs.tree.getCurrentKey()
+          this.checkedData = this.$refs.tree.getCurrentNode()
+        }
+        this.$emit('popoverHide', this.checkedIds, this.checkedData, this.checkedType)
+      },
+      // 节点被点击时的回调,返回被点击的节点数据
+      handleNodeClick(data, node) {
+
+        if (!this.multiple) {
+          let tmpMap = {}
+          tmpMap.value = node.key
+          tmpMap.label = node.label
+          this.options = []
+          this.options.push(tmpMap)
+          this.selectedData = node.label
+          this.isShowSelect = !this.isShowSelect
+          this.value = [node.key]
+          this.$emit('changeCheck')
+        }
+
+      },
+      handleCheckChange() {
+      },
+      // 节点选中状态发生变化时的回调
+      handleCheck() {
+        if (this.multiple) {
+          var checkedKeys = this.$refs.tree.getCheckedKeys() // 所有被选中的节点的 key 所组成的数组数据
+          this.options = checkedKeys.map((item) => {
+            var node = this.$refs.tree.getNode(item) // 所有被选中的节点对应的node
+            let tmpMap = {}
+            tmpMap.value = node.key
+            tmpMap.label = node.label
+            return tmpMap
+          })
+          this.selectedData = this.options.map((item) => {
+            return item.label
+          })
+          let keyArr = this.$refs.tree.getCheckedNodes(true).map(item => {
+            return item.menuId
+          })
+          this.value = keyArr
+          setTimeout(()=>this.$emit('changeCheck'),200)
+        }
+      },
+      setCheckNodes(keys) {
+        if (this.multiple) {
+          this.$refs.tree.setCheckedKeys(keys)
+          setTimeout(() => {
+            this.selectedData=this.$refs.tree.getCheckedNodes(false,false).map(item=>{
+              return item.menuName;
+            })
+          }, 200)
+          // setTimeout(() => {
+          //   if (keys.length > 0) {
+          //     let Tree = this.$refs.tree
+          //     keys.map(item => {
+          //       var ChildArr = Tree.getNode(item).childNodes//子节点的集合
+          //       // 有子节点,now=>父节点
+          //       if (ChildArr.length !== 0) {
+          //         var checkedKeys = this.$refs.tree.getCheckedKeys(); // 所有被选中的节点的 key 所组成的数组数据
+          //
+          //         (function xunhuan(item) {
+          //           item.map((child) => {
+          //             // console.log(child)
+          //             if (child.childNodes.length !== 0) {
+          //               checkedKeys.push(child.key)
+          //               xunhuan(child.childNodes)
+          //             } else {
+          //               checkedKeys.push(child.key)
+          //             }
+          //           })
+          //         }(ChildArr))
+          //
+          //         checkedKeys.push(item)
+          //         this.$refs.tree.setCheckedKeys(checkedKeys)
+          //
+          //         this.options = checkedKeys.map((item) => {
+          //           var node = this.$refs.tree.getNode(item) // 所有被选中的节点对应的node
+          //           let tmpMap = {}
+          //           tmpMap.value = node.key
+          //           tmpMap.label = node.label
+          //           return tmpMap
+          //         })
+          //         this.selectedData = keys.map((item) => {
+          //           var node = this.$refs.tree.getNode(item) // 所有被选中的节点对应的node
+          //           return node.label
+          //         })
+          //
+          //       } else {
+          //         this.$refs.tree.setCheckedKeys(keys)
+          //         this.options = keys.map(item => {
+          //           var node = this.$refs.tree.getNode(item) // 所有被选中的节点对应的node
+          //           let tmpMap = {}
+          //           tmpMap.value = node.key
+          //           tmpMap.label = node.label
+          //           return tmpMap
+          //         })
+          //         this.selectedData = this.options.map((item) => {
+          //           return item.label
+          //         })
+          //       }
+          //     })
+          //
+          //   } else {
+          //     this.$refs.tree.setCheckedKeys(keys)
+          //     this.selectedData = []
+          //   }
+          // }, 200)
+        } else {
+          setTimeout(() => {
+            this.$refs.tree.setCheckedKeys(keys)
+            if (keys.length > 0) {
+              this.selectedData = this.$refs.tree.getNode(keys[0]).label
+            } else {
+              this.selectedData = ''
+            }
+          }, 200)
+        }
       }
     },
     watch: {
-      $route: {
-        handler: function(route) {
-          const query = route.query
-          if (query) {
-            this.redirect = query.redirect
-            this.otherQuery = this.getOtherQuery(query)
-          }
-        },
-        immediate: true
-      }
-    },
-    created() {
-      // window.addEventListener('storage', this.afterQRScan)
-    },
-    mounted() {
-      if (this.loginForm.username === '') {
-        this.$refs.username.focus()
-      } else if (this.loginForm.password === '') {
-        this.$refs.password.focus()
-      }
-      // 验证码初始化
-      this.identifyCode = ''
-      this.makeCode(this.identifyCodes, 4)
-    },
-    destroyed() {
-      // window.removeEventListener('storage', this.afterQRScan)
-    },
-    methods: {
-      checkCapslock(e) {
-        const { key } = e
-        this.capsTooltip = key && key.length === 1 && (key >= 'A' && key <= 'Z')
+      isShowSelect(val) {
+        // 隐藏select自带的下拉框
+        this.$refs.select.blur()
       },
-      showPwd() {
-        if (this.passwordType === 'password') {
-          this.passwordType = ''
-        } else {
-          this.passwordType = 'password'
-        }
-        this.$nextTick(() => {
-          this.$refs.password.focus()
-        })
-      },
-      handleLogin() {
-        this.$refs.loginForm.validate(valid => {
-          if (this.identifyCode!==this.loginForm.verifycode){
-            this.$message.error('验证码错误');
-            return false;
-          }
-          if (valid) {
-            this.loading = true
-            this.$store.dispatch('user/login', this.loginForm)
-              .then(() => {
-                this.$router.push({ path: this.redirect || '/', query: this.otherQuery })
-                this.loading = false
-              })
-              .catch(() => {
-                this.loading = false
-              })
-          } else {
-            console.log('error submit!!')
-            return false
-          }
-        })
-      },
-      getOtherQuery(query) {
-        return Object.keys(query).reduce((acc, cur) => {
-          if (cur !== 'redirect') {
-            acc[cur] = query[cur]
-          }
-          return acc
-        }, {})
-      },
-      // afterQRScan() {
-      //   if (e.key === 'x-admin-oauth-code') {
-      //     const code = getQueryObject(e.newValue)
-      //     const codeMap = {
-      //       wechat: 'code',
-      //       tencent: 'code'
-      //     }
-      //     const type = codeMap[this.auth_type]
-      //     const codeName = code[type]
-      //     if (codeName) {
-      //       this.$store.dispatch('LoginByThirdparty', codeName).then(() => {
-      //         this.$router.push({ path: this.redirect || '/' })
-      //       })
-      //     } else {
-      //       alert('第三方登录失败')
-      //     }
-      //   }
-      // }
-      // 生成随机数
-      randomNum(min, max) {
-        return Math.floor(Math.random() * (max - min) + min)
-      },
-      // 切换验证码
-      refreshCode() {
-        this.identifyCode = ''
-        this.makeCode(this.identifyCodes, 4)
-      },
-      // 生成四位随机验证码
-      makeCode(o, l) {
-        for (let i = 0; i < l; i++) {
-          this.identifyCode += this.identifyCodes[
-            this.randomNum(0, this.identifyCodes.length)
-            ]
-        }
-        console.log(this.identifyCode)
+      value(newVal) {
+        this.$emit('update:checkData', newVal)
       }
     }
   }
 </script>
 
-<style lang="scss">
-  /* 修复input 背景不协调 和光标变色 */
-  /* Detail see https://github.com/PanJiaChen/vue-element-admin/pull/927 */
-
-  $bg: #283443;
-  $light_gray: #fff;
-  $cursor: #fff;
-
-  @supports (-webkit-mask: none) and (not (cater-color: $cursor)) {
-    .login-container .el-input input {
-      color: $cursor;
-    }
+<style scoped>
+  .mask {
+    width: 100%;
+    height: 100%;
+    position: fixed;
+    top: 0;
+    left: 0;
+    opacity: 0;
   }
 
-  /* reset element-ui css */
-  .login-container {
-    .el-input {
-      display: inline-block;
-      height: 47px;
-      width: 85%;
-
-      input {
-        background: transparent;
-        border: 0px;
-        -webkit-appearance: none;
-        border-radius: 0px;
-        padding: 12px 5px 12px 15px;
-        color: $light_gray;
-        height: 47px;
-        caret-color: $cursor;
-
-        &:-webkit-autofill {
-          box-shadow: 0 0 0px 1000px $bg inset !important;
-          -webkit-text-fill-color: $cursor !important;
-        }
-      }
-    }
-
-    .el-form-item {
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      background: rgba(0, 0, 0, 0.1);
-      border-radius: 5px;
-      color: #454545;
-    }
+  .common-tree {
+    overflow: auto;
   }
 </style>
 
-<style lang="scss" scoped>
-  $bg: #2d3a4b;
-  $dark_gray: #889aa4;
-  $light_gray: #eee;
+<style>
+  .tree-select .el-select__tags .el-tag .el-tag__close {
+    display: none;
+  }
 
-  .login-container {
-    min-height: 100%;
-    width: 100%;
-    background-color: $bg;
-    overflow: hidden;
-
-    .login-form {
-      position: relative;
-      width: 520px;
-      max-width: 100%;
-      padding: 160px 35px 0;
-      margin: 0 auto;
-      overflow: hidden;
-    }
-
-    .tips {
-      font-size: 14px;
-      color: #fff;
-      margin-bottom: 10px;
-
-      span {
-        &:first-of-type {
-          margin-right: 16px;
-        }
-      }
-    }
-
-    .svg-container {
-      padding: 6px 5px 6px 15px;
-      color: $dark_gray;
-      vertical-align: middle;
-      width: 30px;
-      display: inline-block;
-    }
-
-    .title-container {
-      position: relative;
-
-      .title {
-        font-size: 26px;
-        color: $light_gray;
-        margin: 0px auto 40px auto;
-        text-align: center;
-        font-weight: bold;
-      }
-    }
-
-    .show-pwd {
-      position: absolute;
-      right: 10px;
-      top: 7px;
-      font-size: 16px;
-      color: $dark_gray;
-      cursor: pointer;
-      user-select: none;
-    }
-
-    .thirdparty-button {
-      position: absolute;
-      right: 0;
-      bottom: 6px;
-    }
-
-    @media only screen and (max-width: 470px) {
-      .thirdparty-button {
-        display: none;
-      }
-    }
+  .tree-select .el-select__tags .el-tag .el-icon-close {
+    display: none;
   }
 </style>

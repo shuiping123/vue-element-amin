@@ -483,7 +483,6 @@
       },
       // 下拉菜单之间的联动关系管理
       changeCheck(node) {
-        console.log(node)
         let type = 'change'
         switch (node) {
           case 'com':
@@ -491,7 +490,6 @@
             if (!this.dep && this.user) this.getUserLst(type)
             break
           case 'dep':
-            console.log(this.deps)
             if (this.user) this.getUserLst(type)
             break
           case 'apptype':
