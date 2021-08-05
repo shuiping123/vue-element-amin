@@ -2,3 +2,38 @@
   width: 100%;
   height: 100%;
 }
+/*页内背景色*/
+.BgBody{
+  background: #F2F6FC;
+  padding: 10px 20px;
+}
+
+.el-row {
+  display: flex;
+  flex-wrap: wrap
+}
+
+:root{
+  --backgound-card:#ffffff;/*卡片背景色*/
+}
+
+
+/*卡片背景色*/
+.el-card{
+  background: var(--backgound-card);
+  height: 100%;
+}
+/*卡片外框 - 控制中间留白的距离*/
+.cardBoxItem{
+  padding: 5px;
+  height: 100%;
+}
+
+
+
+.form-inline .form-group {
+  display: inline-block;
+  margin-bottom: 0;
+  vertical-align: middle;
+}
+
