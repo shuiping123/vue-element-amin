@@ -56,21 +56,7 @@
           </div>
         </el-col>
         <el-col :xs="24" :sm="24" :md="16" :lg="14">
-          <el-col :span="8" style="height: 50%;" v-for="item in 6">
-            <div class="cardBoxItem">
-              <el-card shadow="hover" >
-                <div class="d-flex align-items-center">
-                  <div class="">
-                    <p class="mb-2 text-secondary">Total Profit</p>
-                    <div class="d-flex flex-wrap justify-content-start align-items-center">
-                      <h5 style="font-size: 1.25rem">$95,595</h5>
-                      <p style="color: #3cb72c;font-weight:700;margin-left: 1.25rem">+3.55%</p>
-                    </div>
-                  </div>
-                </div>
-              </el-card>
-            </div>
-          </el-col>
+          <title-item :xs="24" :sm="8" :md="8" :lg="8" :data="TitleLst"></title-item>
         </el-col>
       </el-row>
       <el-row>
@@ -144,11 +130,13 @@
 </template>
 
 <script>
+  import 'element-ui/lib/theme-chalk/display.css';
   import SearchSelect from '@/components/SelectDown/SearchSelect'
   import { request } from '@/network'
+  import titleItem from './component/titleItem'
 
   export default {
-    name: 'test2-6',
+    name: 'apps-view',
     data() {
       return {
         searchInfo: '',
@@ -164,10 +152,76 @@
           iconUrl: null,//软件图标路径
           countryUrl: '',//国家图标路径
           decInfo: ''//描述
-        }
+        },
+        TitleLst: [
+          /**   id:ID，，name：显示名，value：值，util：单位，chain：环比 这里只需要给出正负值30/-30   */
+          {
+            id: 1,
+            name: '软件装机量',
+            title: "选定软件系列已安装的设备数量",
+            value: 200,
+            util: '个',
+            type:'up',
+            image: 'el-icon-s-tools',
+            chain: 30,
+            target:false
+          },
+          {
+            id: 2,
+            name: '访问用户数',
+            title: "使用选定软件的用户数量，及相较上个查询周期的环比变化量",
+            value: 200,
+            util: '人',
+            type:'up',
+            image: 'el-icon-user-solid',
+            chain: -30,
+            target:false
+          },
+          {id: 3,
+            name: '在勤天数',
+            title: "选定软件在查询周期内的使用天数", value: 6, util: '人',
+            type:'up',
+            image: 'el-icon-s-order', chain: -30,
+            target:false
+          },
+          {
+            id: 4,
+            name: '日均访问次数',
+            title: "选定软件在查询周期内的日均打开次数",
+            value: 200,
+            util: '时',
+            type:'up',
+            image: 'el-icon-s-marketing',
+            chain: 30,
+            target:false
+          },
+
+          {
+            id: 6,
+            name: '次均授权用时',
+            title: "选定软件在查询周期内的平均一次打开占用授权的时长",
+            value: 200,
+            util: '条',
+            type:'up',
+            image: 'el-icon-s-data',
+            chain: 30,
+            target:false
+          },
+          {
+            id: 8,
+            name: '异常和预警',
+            title: "软件授权超长时间占用的预警记录条数,<a style='color: blue'>跳转至概览页面查看</a>",
+            value: 200,
+            util: '条',
+            type:'up',
+            image: 'el-icon-message-solid',
+            chain: 30,
+            target:false
+          },
+        ],
       }
     },
-    components: { SearchSelect },
+    components: { SearchSelect,titleItem },
     methods: {
       getSearchData() {
         this.searchInfo = this.$refs.searchSelect.getSearchData()
@@ -230,30 +284,11 @@
   .infoCardBody .el-form-item {
     margin-bottom: 5px;
   }
+  /*以上名片结束*/
 
-  .d-flex {
-    display: flex;
-  }
 
-  .align-items-center {
-    align-items: center;
-  }
 
-  .mb-2 {
-    margin-bottom: 0.625rem;
-  }
 
-  .text-secondary {
-    color: #8f9fbc;
-  }
-
-  .flex-wrap {
-    flex-wrap: wrap;
-  }
-
-  .justify-content-start {
-    justify-content: flex-start;
-  }
 
 
 </style>

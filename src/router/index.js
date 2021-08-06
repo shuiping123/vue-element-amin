@@ -168,6 +168,22 @@ export const asyncRoutes = [
 
     ]
   },
+  {
+    path: '/general-view',
+    name: 'generalview',
+    component: Layout,
+    meta: { title: '概览', icon: 'icon', noCache: true },
+    children: [
+      {
+        path: 'apps-view',
+        hidden: false,
+        component: () => import('@/views/generalView/apps/index'),
+        name: 'apps-view',
+        meta: { title: '软件概览', icon: 'icon', noCache: true }
+      },
+
+    ]
+  },
 
   /** when your routing map is too long, you can split it into small modules **/
   // componentsRouter,
