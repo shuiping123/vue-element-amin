@@ -100,7 +100,7 @@ export const asyncRoutes = [
         path: 'index',
         component: () => import('@/views/icons/index'),
         name: 'Icons',
-        meta: { title: 'Icons', icon: 'icon', noCache: true }
+        meta: { title: 'Icons', icon: 'icon', noCache: false }
       }
     ]
   },
@@ -112,7 +112,7 @@ export const asyncRoutes = [
         path: 'index',
         component: () => import('@/views/test/Test'),
         name: 'test',
-        meta: { title: '测试内容', icon: 'icon', noCache: true }
+        meta: { title: '测试内容', icon: 'icon', noCache: false }
       }
     ]
   },
@@ -120,14 +120,14 @@ export const asyncRoutes = [
     path: '/test2',
     name: 'test2',
     component: Layout,
-    meta: { title: '测试内容2', icon: 'icon', noCache: true },
+    meta: { title: '测试内容2', icon: 'icon', noCache: false },
     children: [
       {
         path: 'test2-1',
         hidden: false,
         component: () => import('@/views/test2/Test2-1'),
         name: 'test2-1',
-        meta: { title: '测试内容2-1', icon: 'icon', noCache: true }
+        meta: { title: '测试内容2-1', icon: 'icon', noCache: false }
       },
       {
         path: 'test2-2',
@@ -135,35 +135,35 @@ export const asyncRoutes = [
         component: () => import('@/views/test2/Test2-2'),
         name: 'test2-2',
         prop: ['name'],
-        meta: { title: '测试内容2-2', icon: 'icon', noCache: true }
+        meta: { title: '测试内容2-2', icon: 'icon', noCache: false }
       },
       {
         path: 'test2-3',
         hidden: false,
         component: () => import('@/views/test2/Test2-3'),
         name: 'test2-3',
-        meta: { title: '测试内容2-3', icon: 'icon', noCache: true }
+        meta: { title: '测试内容2-3', icon: 'icon', noCache: false }
       },
       {
         path: 'test2-4',
         hidden: false,
         component: () => import('@/views/test2/Test2-4'),
         name: 'test2-4',
-        meta: { title: '测试内容2-4', icon: 'icon', noCache: true }
+        meta: { title: '测试内容2-4', icon: 'icon', noCache: false }
       },
       {
         path: 'test2-5',
         hidden: false,
         component: () => import('@/views/test2/Test2-5'),
         name: 'test2-5',
-        meta: { title: '测试内容2-5', icon: 'icon', noCache: true }
+        meta: { title: '测试内容2-5', icon: 'icon', noCache: false }
       },
       {
         path: 'test2-6',
         hidden: false,
         component: () => import('@/views/test2/Test2-6'),
         name: 'test2-6',
-        meta: { title: '测试内容2-6', icon: 'icon', noCache: true }
+        meta: { title: '测试内容2-6', icon: 'icon', noCache: false }
       }
 
     ]
@@ -172,14 +172,14 @@ export const asyncRoutes = [
     path: '/general-view',
     name: 'generalview',
     component: Layout,
-    meta: { title: '概览', icon: 'icon', noCache: true },
+    meta: { title: '概览', icon: 'icon', noCache: false },
     children: [
       {
         path: 'apps-view',
         hidden: false,
         component: () => import('@/views/generalView/apps/index'),
         name: 'apps-view',
-        meta: { title: '软件概览', icon: 'icon', noCache: true }
+        meta: { title: '软件概览', icon: 'icon', noCache: false }
       },
 
     ]

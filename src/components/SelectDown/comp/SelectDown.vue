@@ -62,6 +62,7 @@
                @check="handleCheck"
                @check-change="handleCheckChange"></el-tree>
       <el-input slot="reference"
+                prefix-icon="el-icon-search"
                 :style="{width: width}"
                 :placeholder="placeholder"
                 ref="select"

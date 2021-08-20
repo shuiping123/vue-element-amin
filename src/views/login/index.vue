@@ -218,6 +218,7 @@
                   });
                   return false;
                 }else if (res.reCode==0){
+                  this.$store.commit('CHANGE_LOG_STATE','login')
                   this.$router.push({ path: this.redirect || '/', query: this.otherQuery })
                 }
               })

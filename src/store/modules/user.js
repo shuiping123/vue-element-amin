@@ -2,6 +2,7 @@ import { login, logout, getInfo, checklog } from '@/api/user'
 import { getToken, setToken, removeToken } from '@/utils/auth'
 import router, { resetRouter } from '@/router'
 import {Message} from "element-ui";
+import context from '@/main'
 
 const state = {
   token: 'admin-token',
@@ -116,7 +117,7 @@ const actions = {
             async onClose(){
               // dispatch('logout')
               await dispatch('logout')
-
+              commit('CHANGE_LOG_STATE','logout')
               router.app.$router.push(`/login?redirect=${router.app.$route.fullPath}`)
             }
           })

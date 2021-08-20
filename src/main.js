@@ -24,14 +24,14 @@ import './permission' // permission control
 import './utils/error-log' // error log
 
 import * as filters from './filters' // global filters
-
+import _ from 'lodash'
 /**
  * 自己写的 - 调用公共js，非admin原生自带
  * */
-import currentJs from './assets/js/current.js';
+import currentJs from './assets/js/current.js';//通用函数
+import charts_setting from '@/assets/js/charts_setting'//echarts样式配置
 Vue.prototype.$current=currentJs;
-
-
+Vue.prototype.$charts_setting=charts_setting.config;
 
 
 /**
@@ -60,9 +60,11 @@ Object.keys(filters).forEach(key => {
 
 Vue.config.productionTip = false
 Vue.prototype.$echarts = echarts
-new Vue({
+Vue.prototype._=_;
+let thisVue=new Vue({
   el: '#app',
   router,
   store,
   render: h => h(App)
 })
+export default thisVue;

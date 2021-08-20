@@ -1,6 +1,6 @@
 <template>
   <div>
-    <button @click="targetToAddTags('test2-3',[1])">跳转2-2</button>
+    <button @click="targetToAddTags('apps-view',[1])">跳转2-2</button>
   </div>
 </template>
 
@@ -12,8 +12,10 @@ export default {
       this.$router.push({
         name: urlName,
         params: {
-          comid: id,
-          depid:[-2]
+          startdate:'2020-10-21',
+          enddate:'2020-10-22',
+          // comid: id,
+          // depid:[-2]
         }
       })
       this.$store.dispatch('tagsView/addView', this.$route)

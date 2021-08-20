@@ -34,7 +34,6 @@ export default {
       const _this = this
 
       if (!_this.myChart) _this.myChart = this.$echarts.init(this.$el)
-      console.log(this.watchLoad)
 
       if (this.watchLoad) {
         _this.myChart.setOption({},true);
@@ -110,6 +109,9 @@ export default {
       window.onresize = () => {
         _this.myChart.resize()
       }
+    },
+    resizeFun(){
+      this.myChart.resize();
     }
   }
 }

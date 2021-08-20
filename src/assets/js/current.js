@@ -1,9 +1,12 @@
 import { JSEncrypt } from 'jsencrypt'
+import context from '@/main'
+
 
 // 退出登录
-async function toLoginOut(nowThis) {
-  await nowThis.$store.dispatch('user/logout')
-  nowThis.$router.push(`/login?redirect=${nowThis.$route.fullPath}`)
+async function toLoginOut() {
+  await context.$store.dispatch('user/logout')
+  context.$store.commit('CHANGE_LOG_STATE','logout')
+  context.$router.push(`/login?redirect=${context.$route.fullPath}`)
 }
 
 // 密码加密，直接返回密码值
@@ -15,7 +18,19 @@ function setEncrypt(msg) {
   return encrypt.encrypt(msg)
 }
 
+function errDataView(domElement,errorInfo) {
+  setTimeout(()=>{
+    domElement.innerHTML=`<div style="align-items:center;justify-content:center;display: -webkit-flex;display: flex;width: 100%;height: 100%;color: var(--err-info-color)">
+                            <i class="el-icon-warning-outline"></i>
+                            <span style="font:16px Medium;">${errorInfo}</span>
+                        </div>`;
+  },200)
+}
+
+
+
 export default {
   toLoginOut,
-  setEncrypt
+  setEncrypt,
+  errDataView,
 }

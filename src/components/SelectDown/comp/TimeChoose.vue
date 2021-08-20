@@ -1,21 +1,24 @@
 <template>
   <div class="searchItem" style="width:auto!important;">
     <el-date-picker v-if="type!='timerange'"
-      v-model="value2"
-      :type="type"
-      :picker-options="pickerOptions"
-      range-separator="至"
-      start-placeholder="开始日期"
-      end-placeholder="结束日期"
-      align="right">
+                    v-model="value2"
+                    :type="type"
+                    :value-format="type=='daterange'?'yyyy-MM-dd':'yyyy-MM-dd HH:mm:ss'"
+                    :picker-options="pickerOptions"
+                    range-separator="至"
+                    start-placeholder="开始日期"
+                    end-placeholder="结束日期"
+                    @change="pickFun"
+                    align="right">
     </el-date-picker>
     <el-time-picker v-else
-      is-range
-      v-model="value2"
-      range-separator="至"
-      start-placeholder="开始时间"
-      end-placeholder="结束时间"
-      placeholder="选择时间范围">
+                    is-range
+                    v-model="value2"
+                    value-format="HH:mm:ss"
+                    range-separator="至"
+                    start-placeholder="开始时间"
+                    end-placeholder="结束时间"
+                    placeholder="选择时间范围">
     </el-time-picker>
   </div>
 </template>
@@ -31,13 +34,13 @@
     name: 'TimeChoose',
     props: {
       value: {
-        default(){
+        default() {
           return ''
         }
       },
       type: {
         type: String,
-        default(){
+        default() {
           return 'daterange'
         }
       }
@@ -50,8 +53,8 @@
               text: '全年',
               onClick(picker) {
                 picker.$emit('pick', [
-                  new Date(new Date().getFullYear(), 0, 1).getTime(),
-                  new Date(new Date().getFullYear(), 11, 31).getTime()
+                  new Date(new Date().getFullYear(), 0, 1),
+                  new Date(new Date().getFullYear(), 11, 31)
                 ])
               }
             },
@@ -59,8 +62,8 @@
               text: '本月',
               onClick(picker) {
                 picker.$emit('pick', [
-                  new Date(new Date().getFullYear(), new Date().getMonth(), 1).getTime(),
-                  new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0).getTime()
+                  new Date(new Date().getFullYear(), new Date().getMonth(), 1),
+                  new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0)
                 ])
               }
             },
@@ -68,8 +71,8 @@
               text: '上月',
               onClick(picker) {
                 picker.$emit('pick', [
-                  new Date(new Date().getFullYear(), new Date().getMonth(), 1).getTime(),
-                  new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0).getTime()
+                  new Date(new Date().getFullYear(), new Date().getMonth()-1, 1),
+                  new Date(new Date().getFullYear(), new Date().getMonth(), 0)
                 ])
               }
             },
@@ -79,7 +82,10 @@
                 const end = new Date()
                 const start = new Date()
                 start.setTime(start.getTime() - 3600 * 1000 * 24 * 7)
-                picker.$emit('pick', [start, end])
+                picker.$emit('pick', [
+                  new Date(start.getFullYear(), start.getMonth(), start.getDate()),
+                  new Date(end.getFullYear(), end.getMonth(), end.getDate())
+                ])
               }
             },
             {
@@ -88,7 +94,10 @@
                 const end = new Date()
                 const start = new Date()
                 start.setTime(start.getTime() - 3600 * 1000 * 24 * 30)
-                picker.$emit('pick', [start, end])
+                picker.$emit('pick', [
+                  new Date(start.getFullYear(), start.getMonth(), start.getDate()),
+                  new Date(end.getFullYear(), end.getMonth(), end.getDate())
+                ])
               }
             },
             {
@@ -97,41 +106,49 @@
                 const end = new Date()
                 const start = new Date()
                 start.setTime(start.getTime() - 3600 * 1000 * 24 * 90)
-                picker.$emit('pick', [start, end])
+                picker.$emit('pick', [
+                  new Date(start.getFullYear(), start.getMonth(), start.getDate()),
+                  new Date(end.getFullYear(), end.getMonth(), end.getDate())
+                ])
               }
             }]
         },
         value1: [new Date(2000, 10, 10, 10, 10), new Date(2000, 10, 11, 10, 10)],
-        value2: '',
-        date: ''
+        value2: null,
       }
     },
     watch: {
-      value2(newVal) {
-        if (newVal != ''&&newVal!=undefined&&newVal!=null) {
-          this.date = newVal.map(item => {
-            let date = new Date(item)
-            if(this.type=='daterange'){
-              return date.getFullYear()+ '-'+(date.getMonth()+1)+'-'+date.getDate();
-            }else if (this.type=='datetimerange'){
-              return date.getFullYear()+ '-'+(date.getMonth()+1)+'-'+date.getDate()+' '+date.getHours()+':'+date.getMinutes()+':'+date.getSeconds();
-            }else if(this.type=='timerange'){
-              return date.getHours()+':'+date.getMinutes()+':'+date.getSeconds();
-            }
-          })
-        }else {
-          this.date='';
+      value2(newVal){
+        if (this.type=='timerange') {
+          if (!newVal){
+            newVal=['00:00:00','00:00:00']
+          }
+          this.value2 = newVal
+          this.$emit('update:value', newVal)
         }
       },
-      date(newVal){
-        this.$emit('update:value',newVal)
+      value(newVal) {
+        if (this.type!=='timerange') this.pickFun(newVal);
       }
     },
-    created() {
-      if (this.value != '') {
-        this.value2 = this.value.map(item=>{
-          return new Date(item.replace(/-/,'/')).getTime()
-        })
+    mounted() {
+      this.value2 = this.value
+      this.pickFun(this.value);
+    },
+    methods:{
+      pickFun(date){
+        if (date == '' || date == undefined || date == null) {
+          const end = new Date()
+          const start = new Date()
+          start.setTime(start.getTime() - 3600 * 1000 * 24 * 30);
+          let arr=[
+            start.getFullYear()+'-'+(start.getMonth()+1)+'-'+start.getDate(),
+            end.getFullYear()+'-'+ (end.getMonth()+1)+'-'+ end.getDate()
+          ];
+          date=arr;
+        }
+        this.$emit('update:value', date)
+        this.value2=date;
       }
     }
   }

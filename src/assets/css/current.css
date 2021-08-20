@@ -10,11 +10,16 @@
 
 .el-row {
   display: flex;
-  flex-wrap: wrap
+  flex-wrap: wrap;
 }
 
 :root{
   --backgound-card:#ffffff;/*卡片背景色*/
+  --card-title-color:#303133;/*卡片标题字体颜色*/
+  --mini-box-color:#42b983;/*页面主色调，一般用于标题块儿，某些标题特殊颜色，icon特殊颜色，视情况而定*/
+  --box-color-blue:#6e50f5;/*页面主色调，一般用于标题块儿，某些标题特殊颜色，icon特殊颜色，视情况而定*/
+  --box-color-font-blue:#65ABE7;/*页面主色调，一般用于标题块儿，某些标题特殊颜色，icon特殊颜色，视情况而定*/
+  --err-info-color:#65ABE7;/*报错信息颜色*/
 }
 
 
@@ -28,7 +33,15 @@
   padding: 5px;
   height: 100%;
 }
-
+/*卡片头 - 卡片名称*/
+.cardBoxTitle{
+  line-height: 18px;
+  display: inline-block;
+  margin-bottom: 1em;
+  font-size: 16px;
+  color: var(--card-title-color);
+  font-weight: 500;
+}
 
 
 .form-inline .form-group {
@@ -37,3 +50,16 @@
   vertical-align: middle;
 }
 
+/*超出文本显示省略号 - 可直接使用*/
+.ellipsisDiv{
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap
+}
+
+/*报错信息提示样式*/
+.errInfoStyle{
+  color: var(--err-info-color);
+  font-weight: normal;
+  font-size: 16px
+}

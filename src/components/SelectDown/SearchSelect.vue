@@ -1,32 +1,32 @@
 <template>
   <div class="SDiv" style="width:100%;">
 
-    <el-collapse v-model="activeNames" style="width: 100%;" >
-      <el-collapse-item  style="width: 100%;" name="1">
+    <el-collapse v-model="activeNames" style="width: 100%;">
+      <el-collapse-item style="width: 100%;" name="1">
         <template slot="title">
           <i style="margin-left: 20px" class="header-icon el-icon-search"></i><span style="margin-left: 5px">查询条件</span>
         </template>
         <div class="searchDiv">
           <!--时间选择-->
-          <time-choose  v-if="showdate" ref="datetime" :type="showdate" :value.sync="date"></time-choose>
+          <time-choose v-if="showdate" ref="datetime" :type="showdate" :value.sync="date"></time-choose>
           <!--时间选择-->
-          <time-choose  v-if="showtime" ref="datetime" type="timerange" :value.sync="date2"></time-choose>
+          <time-choose v-if="showtime" ref="datetime" type="timerange" :value.sync="date2"></time-choose>
           <!--单位选择-->
-          <tree-select  v-if="com=='multiple'" :data="data"
-                        ref="coms"
-                        @changeCheck="changeCheck('com')"
-                        :checkData.sync="coms"
-                        :check-strictly="true"
-                        placeholder="请选择单位"
-                        :checkedKeys="coms"></tree-select>
-          <select-down-normal   v-if="com!=='multiple'" :data="data"
-                                ref="coms"
-                                :check-strictly="true"
-                                :multiple="false"
-                                @changeCheck="changeCheck('com')"
-                                :checkData.sync="coms"
-                                placeholder="请选择单位"
-                                :checkedKeys="coms"></select-down-normal>
+          <tree-select v-if="com=='multiple'" :data="data"
+                       ref="coms"
+                       @changeCheck="changeCheck('com')"
+                       :checkData.sync="coms"
+                       :check-strictly="true"
+                       placeholder="请选择单位"
+                       :checkedKeys="coms"></tree-select>
+          <select-down-normal v-if="com!=='multiple'" :data="data"
+                              ref="coms"
+                              :check-strictly="true"
+                              :multiple="false"
+                              @changeCheck="changeCheck('com')"
+                              :checkData.sync="coms"
+                              placeholder="请选择单位"
+                              :checkedKeys="coms"></select-down-normal>
           <div class="searchItem" v-if="com" style="padding: 10px 5px;">
             <el-switch
               v-model="BaokouAllChildComId"
@@ -37,48 +37,48 @@
             </el-switch>
           </div>
           <!--部门-->
-          <select-down-normal  v-if="dep=='multiple'" :data="dataForDep"
-                               ref="depRef"
-                               :check-strictly="false"
-                               :multiple="this.dep=='multiple'"
-                               @changeCheck="changeCheck('dep')"
-                               :checkData.sync="deps"
-                               placeholder="请选择部门"
-                               :checkedKeys="deps"></select-down-normal>
+          <select-down-normal v-if="dep=='multiple'" :data="dataForDep"
+                              ref="depRef"
+                              :check-strictly="false"
+                              :multiple="this.dep=='multiple'"
+                              @changeCheck="changeCheck('dep')"
+                              :checkData.sync="deps"
+                              placeholder="请选择部门"
+                              :checkedKeys="deps"></select-down-normal>
           <!--用户-->
-          <select-down-normal  v-if="user" :data="data2"
-                               ref="users"
-                               :check-strictly="false"
-                               :multiple="this.user=='multiple'"
-                               :checkData.sync="users"
-                               placeholder="请选择用户"
-                               :checkedKeys="users"></select-down-normal>
+          <select-down-normal v-if="user" :data="data2"
+                              ref="users"
+                              :check-strictly="false"
+                              :multiple="this.user=='multiple'"
+                              :checkData.sync="users"
+                              placeholder="请选择用户"
+                              :checkedKeys="users"></select-down-normal>
           <!--采集方式-->
-          <select-down-normal  v-if="apptype" :data="data1"
-                               ref="apptypes"
-                               :check-strictly="false"
-                               :multiple="this.apptype=='multiple'"
-                               :checkData.sync="apptypes"
-                               @changeCheck="changeCheck('apptype')"
-                               placeholder="请选择软件采集方式"
-                               :checkedKeys="apptypes"></select-down-normal>
+          <select-down-normal v-if="apptype" :data="data1"
+                              ref="apptypes"
+                              :check-strictly="false"
+                              :multiple="this.apptype=='multiple'"
+                              :checkData.sync="apptypes"
+                              @changeCheck="changeCheck('apptype')"
+                              placeholder="请选择软件采集方式"
+                              :checkedKeys="apptypes"></select-down-normal>
           <!--软件-->
-          <select-down-normal  v-if="app" :data="data3"
-                               ref="apps"
-                               :check-strictly="false"
-                               :multiple="this.app=='multiple'"
-                               @changeCheck="changeCheck('app')"
-                               :checkData.sync="apps"
-                               placeholder="请选择软件"
-                               :checkedKeys="apps"></select-down-normal>
+          <select-down-normal v-if="app" :data="data3"
+                              ref="apps"
+                              :check-strictly="false"
+                              :multiple="this.app=='multiple'"
+                              @changeCheck="changeCheck('app')"
+                              :checkData.sync="apps"
+                              placeholder="请选择软件"
+                              :checkedKeys="apps"></select-down-normal>
           <!--模块-->
-          <select-down-normal  v-if="module" :data="data4"
-                               ref="modules"
-                               :check-strictly="false"
-                               :multiple="this.module=='multiple'"
-                               :checkData.sync="modules"
-                               placeholder="请选择模块"
-                               :checkedKeys="modules"></select-down-normal>
+          <select-down-normal v-if="module" :data="data4"
+                              ref="modules"
+                              :check-strictly="false"
+                              :multiple="this.module=='multiple'"
+                              :checkData.sync="modules"
+                              placeholder="请选择模块"
+                              :checkedKeys="modules"></select-down-normal>
           <!--输入关键字-->
           <div class="searchItem">
             <el-input
@@ -89,23 +89,23 @@
             </el-input>
           </div>
           <!--查询条件 - 安装软件信息查询-->
-          <select-down-normal  v-if="showsearchterm" :data="data5"
-                               ref="searchTermRef"
-                               :check-strictly="false"
-                               :multiple="this.showsearchterm=='multiple'"
-                               :checkData.sync="searchTerms"
-                               placeholder="请选择查询条件"
-                               :checkedKeys="searchTerms"></select-down-normal>
+          <select-down-normal v-if="showsearchterm" :data="data5"
+                              ref="searchTermRef"
+                              :check-strictly="false"
+                              :multiple="this.showsearchterm=='multiple'"
+                              :checkData.sync="searchTerms"
+                              placeholder="请选择查询条件"
+                              :checkedKeys="searchTerms"></select-down-normal>
           <!--是否卸载 - 安装软件信息查询-->
-          <select-down-normal  v-if="showisunstall" :data="data6"
-                               ref="isUnstallRef"
-                               :check-strictly="false"
-                               :multiple="this.showisunstall=='multiple'"
-                               :checkData.sync="isUnstall"
-                               placeholder="请选择是否卸载"
-                               :checkedKeys="isUnstall"></select-down-normal>
+          <select-down-normal v-if="showisunstall" :data="data6"
+                              ref="isUnstallRef"
+                              :check-strictly="false"
+                              :multiple="this.showisunstall=='multiple'"
+                              :checkData.sync="isUnstall"
+                              placeholder="请选择是否卸载"
+                              :checkedKeys="isUnstall"></select-down-normal>
           <!--输入用户名-->
-          <div  class="searchItem">
+          <div class="searchItem">
             <el-input
               v-if="showusername"
               placeholder="请输入用户名"
@@ -114,7 +114,7 @@
             </el-input>
           </div>
           <!--输入设备名-->
-          <div  class="searchItem">
+          <div class="searchItem">
             <el-input
               v-if="showdevname"
               placeholder="输入设备名"
@@ -123,19 +123,23 @@
             </el-input>
           </div>
           <!--超时时间范围-->
-          <select-down-normal  v-if="showovertime" :data="data7"
-                               ref="overTimeRef"
-                               :check-strictly="false"
-                               :multiple="this.showovertime=='multiple'"
-                               :checkData.sync="overTimeType"
-                               placeholder="请选择超时时间范围"
-                               :checkedKeys="overTimeType"></select-down-normal>
+          <select-down-normal v-if="showovertime" :data="data7"
+                              ref="overTimeRef"
+                              :check-strictly="false"
+                              :multiple="this.showovertime=='multiple'"
+                              :checkData.sync="overTimeType"
+                              placeholder="请选择超时时间范围"
+                              :checkedKeys="overTimeType"></select-down-normal>
           <!--查询按钮-->
-          <div class="searchItem" >
-            <el-button type="primary" icon="el-icon-search" @click="SearchAction">查询</el-button>
+          <div class="searchItem">
+            <el-button type="primary" icon="el-icon-search" @click="SearchAction(0)">查询</el-button>
           </div>
-          <div class="searchItem" >
-            <el-button type="primary" icon="el-icon-s-order">导出EXCEL</el-button>
+          <div class="searchItem">
+            <el-button type="primary" icon="el-icon-refresh" @click="SearchAction(1)">刷新</el-button>
+          </div>
+          <div class="searchItem">
+
+            <el-button type="primary" :icon="pdf_downing?'':'el-icon-picture-outline'" :loading="pdf_downing" @click.active="DownPdf">导出PDF</el-button>
           </div>
 
 
@@ -144,21 +148,25 @@
     </el-collapse>
 
 
+    <!--    <div v-show="!isSmall">-->
+    <!--      <el-button type="primary" size="mini" title="导出EXCEL" icon="el-icon-s-order">导出</el-button>-->
+    <!--    </div>-->
 
 
-<!--    <div v-show="!isSmall">-->
-<!--      <el-button type="primary" size="mini" title="导出EXCEL" icon="el-icon-s-order">导出</el-button>-->
-<!--    </div>-->
-
-
-<!--    <el-backtop>-->
-        <transition name="el-zoom-in-bottom">
-          <el-button v-show="isSmall" class="fiexdBtn" type="primary" size="medium" title="刷新" @click="SearchAction" icon="el-icon-refresh" circle></el-button>
-        </transition>
-        <transition name="el-zoom-in-bottom">
-          <el-button v-show="isSmall" class="fiexdBtn1" type="primary" size="medium" title="回到顶部" icon="el-icon-arrow-up" @click="toTopFUn" circle></el-button>
-        </transition>
-<!--    </el-backtop>-->
+    <!--    <el-backtop>-->
+    <transition name="el-zoom-in-bottom">
+      <el-button v-show="isSmall" class="fiexdBtn" type="primary" size="medium" title="查询" @click="SearchAction(0)"
+                 icon="el-icon-search" circle></el-button>
+    </transition>
+    <transition name="el-zoom-in-bottom">
+      <el-button v-show="isSmall" class="fiexdBtn1" type="primary" size="medium" title="刷新" icon="el-icon-refresh"
+                 @click="SearchAction(1)" circle></el-button>
+    </transition>
+    <transition name="el-zoom-in-bottom">
+      <el-button v-show="isSmall" class="fiexdBtn2" type="primary" size="medium" title="回到顶部" icon="el-icon-arrow-up"
+                 @click="toTopFUn" circle></el-button>
+    </transition>
+    <!--    </el-backtop>-->
 
 
     <!--    <div style="width: 100%;height: 20px;text-align: center"></div>-->
@@ -178,21 +186,22 @@
   import SelectDownNormal from '@/components/SelectDown/comp/SelectDownNormal'
   import TimeChoose from '@/components/SelectDown/comp/TimeChoose'
   // 导入节流函数
-  import throttle from 'throttle-debounce/throttle';
+  import throttle from 'throttle-debounce/throttle'
 
-  const URL='/Ashx/DropSelData.ashx';
+  const URL = '/Ashx/DropSelData.ashx'
 
   export default {
     name: 'searchSelect',
     props: [
-      'showdate', 'showtime', 'com', 'baohan','user',
+      'showdate', 'showtime', 'com', 'baohan', 'user',
       'apptype', 'app', 'module', 'showkeywords',
       'showsearchterm', 'showisunstall', 'showusername', 'showdevname',
       'showovertime', 'dep'],
     components: { TreeSelect, SelectDownNormal, TimeChoose },
     data() {
       return {
-        isSmall:false,
+        pdf_downing: false,//是否在导出pdf中
+        isSmall: false,
         activeNames: ['1'],
         // 下拉菜单
         data: [],// 单位数据 - 下拉菜单
@@ -218,7 +227,7 @@
 
         // 选中的数据
         coms: [],// 选中的单位数据
-        BaokouAllChildComId:"1",
+        BaokouAllChildComId: '1',
         deps: [],// 选中的部门数据
         users: [],// 选中的用户数据
         apptypes: [],// 选中的软件类型数据
@@ -231,28 +240,32 @@
         isUnstall: [],// 选中的是否卸载的数据
         userName: '',//用户模糊查询
         devName: '',//设备名模糊查询
-        overTimeType: []//选中的超时占用时长范围
-
+        overTimeType: [],//选中的超时占用时长范围
+        Is_Need_Count: 0
       }
     },
     methods: {
+      // 时间初始化
+      getDateFun() {
+        const { startdate, enddate } = this.$route.params
+        this.date = (startdate && enddate) ? [startdate, enddate] : null
+      },
       // 下拉菜单异步获取
       getCom(type) {
         // this.data = []
         // this.coms = []
         request({
-          url:URL,
+          url: URL,
           // url: '/coms',
           params: {
-            ty: 'GetComTree_Vue',
+            ty: 'GetComTree_Vue'
             // zml: 1
           }
         }).then(res => {
-          if (res.reCode!=0){
-            return false;
+          if (res.reCode != 0) {
+            return false
           }
-          let isMultiple=this.com == 'multiple'
-
+          let isMultiple = this.com == 'multiple'
           this.data = res.reData
           if (type == 'init') {
             const { comid } = this.$route.params
@@ -280,14 +293,14 @@
             ComId: this.coms.join(',')
           }
         }).then(res => {
-          if (res.reCode==2){
+          if (res.reCode == 2) {
             this.$alert(res.reMsg, '错误信息', {
               confirmButtonText: '重新登录',
               callback: action => {
-                this.$current.toLoginOut(this);
+                this.$current.toLoginOut(this)
               }
-            });
-            return false;
+            })
+            return false
           }
           let isMultiple = this.dep == 'multiple'
           let obj = res.reData.map(item => {
@@ -330,14 +343,14 @@
             DepId: this.deps.join(',')
           }
         }).then(res => {
-          if (res.reCode==2){
+          if (res.reCode == 2) {
             this.$alert(res.reMsg, '错误信息', {
               confirmButtonText: '重新登录',
               callback: action => {
-                this.$current.toLoginOut(this);
+                this.$current.toLoginOut(this)
               }
-            });
-            return false;
+            })
+            return false
           }
           let isMultiple = this.user == 'multiple'
           let obj = res.reData.map(item => {
@@ -352,7 +365,7 @@
               menuName: '全选',
               childrenList: obj
             }
-          ]: obj;
+          ] : obj
 
           if (type == 'init') {
             const { usrid } = this.$route.params
@@ -396,17 +409,17 @@
         request({
           url: URL,
           params: {
-            ty: 'GetComFamSel',
+            ty: 'GetComFamSel'
           }
         }).then(res => {
-          if (res.reCode==2){
+          if (res.reCode == 2) {
             this.$alert(res.reMsg, '错误信息', {
               confirmButtonText: '重新登录',
               callback: action => {
-                this.$current.toLoginOut(this);
+                this.$current.toLoginOut(this)
               }
-            });
-            return false;
+            })
+            return false
           }
           let isMultiple = this.app == 'multiple'
           let obj = res.reData.map(item => {
@@ -445,17 +458,17 @@
           params: {
             ty: 'GetComFamModuleLst',
             ComFamId: this.apps.join(','),
-            ComFamSource: this.apptypes.join(','),
+            ComFamSource: this.apptypes.join(',')
           }
         }).then(res => {
-          if (res.reCode==2){
+          if (res.reCode == 2) {
             this.$alert(res.reMsg, '错误信息', {
               confirmButtonText: '重新登录',
               callback: action => {
-                this.$current.toLoginOut(this);
+                this.$current.toLoginOut(this)
               }
-            });
-            return false;
+            })
+            return false
           }
           let isMultiple = this.module == 'multiple'
           let obj = res.reData.map(item => {
@@ -536,8 +549,8 @@
             if (this.user) this.getUserLst(type)
             break
           case 'apptype':
-            if (this.app)this.getApp(type);
-            if (!this.app&&this.module)this.getModule(type);
+            if (this.app) this.getApp(type)
+            if (!this.app && this.module) this.getModule(type)
             break
           case 'app':
             if (this.module) this.getModule(type)
@@ -548,79 +561,100 @@
       // 向外输出结果s
       getSearchData() {
         return {
-          coms: this.coms,
-          BaokouAllChildComId:this.BaokouAllChildComId,
-          deps: this.deps,
-          users: this.users,
-          apptypes: this.apptypes,
-          apps: this.apps,
-          modules: this.modules,
-          date: this.date,
+          ComId: this.coms,
+          BaokouAllChildComId: this.BaokouAllChildComId,
+          DepId: this.deps,
+          UsrId: this.users,
+          IsModuleLog: this.apptypes,//采集方式
+          ComFamId: this.apps,
+          ModuleId: this.modules,
+          StartDate: this.date[0],
+          EndDate: this.date[1],
           date2: this.date2,
           keywords: this.keywords,
           searchTerms: this.searchTerms,
           isUnstall: this.isUnstall,
           userName: this.userName,
           devName: this.devName,
-          overTimeType: this.overTimeType
+          overTimeType: this.overTimeType,
+          Is_Need_Count: this.Is_Need_Count
         }
       },
       // 查询执行的函数
-      SearchAction(){
+      SearchAction(Is_Need_Count) {
+        this.Is_Need_Count = Is_Need_Count
         this.$emit('searchAction')
       },
-      toTopFUn(){
-        document.body.scrollTop = document.documentElement.scrollTop = 0;
+      toTopFUn() {
+        document.body.scrollTop = document.documentElement.scrollTop = 0
+      },
+      // 初始化 - 默认加载
+      init() {
+        // 默认加载
+        if (this.showdate) {
+          this.getDateFun()
+        }
+        if (this.com) {
+          this.getCom('init')
+          this.BaokouAllChildComId = this.baohan
+        }
+        // 被联动数据，默认不在此初始加载,要写在联动管理里
+        if (this.dep && !this.com) {
+          this.getDep('init')
+        }
+        if (this.user && !this.com && !this.dep) {
+          this.getUserLst('init')
+        }
+        if (this.apptype) {
+          this.getAppType('init')
+        }
+        if (this.app && !this.apptype) {
+          this.getApp('init')
+        }
+        if (this.module && !this.app) {
+          this.getModule('init')
+        }
+        if (this.showsearchterm) {
+          this.getSearchTerms('init')
+        }
+        if (this.showisunstall) {
+          this.getIsUnstall('init')
+        }
+        if (this.showovertime) {
+          this.getOvertimeType('init')
+        }
+      },
+      // 初始化后，默认加载完成后执行的函数
+      async finishFun() {
+        await this.init()
+        setTimeout(() => {
+          this.$emit('loadFinished')
+        }, 2000)
+      },
+      DownPdf() {
+        if (!this.pdf_downing) {
+          this.pdf_downing=true;
+          this.$emit('DownPdf')
+          setTimeout(()=>{this.pdf_downing=false;},3000)
+        }
       }
     },
     mounted() {
-      // 默认加载
-      if (this.com) {
-        this.getCom('init')
-        this.BaokouAllChildComId=this.baohan;
-      }
-      // 被联动数据，默认不在此初始加载,要写在联动管理里
-      if (this.dep && !this.com) {
-        this.getDep('init')
-      }
-      if (this.user && !this.com && !this.dep) {
-        this.getUserLst('init')
-      }
-      if (this.apptype) {
-        this.getAppType('init')
-      }
-      if (this.app && !this.apptype) {
-        this.getApp('init')
-      }
-      if (this.module && !this.app) {
-        this.getModule('init')
-      }
-      if (this.showsearchterm) {
-        this.getSearchTerms('init')
-      }
-      if (this.showisunstall) {
-        this.getIsUnstall('init')
-      }
-      if (this.showovertime) {
-        this.getOvertimeType('init')
-      }
 
-
+      this.finishFun()
 
       // 滚动显示
-      window.onscroll = ()=>throttle(300, scrollFun());
-      const _this=this;
+      window.onscroll = () => throttle(300, scrollFun())
+      const _this = this
+
       function scrollFun() {
-        var scrollTop = document.body.scrollTop || (document.documentElement && document.documentElement.scrollTop);
-        if (scrollTop >=400) {
-          _this.isSmall=true;
-        } else{
-          _this.isSmall=false;
+        var scrollTop = document.body.scrollTop || (document.documentElement && document.documentElement.scrollTop)
+        if (scrollTop >= 400) {
+          _this.isSmall = true
+        } else {
+          _this.isSmall = false
         }
       }
-
-
-
 
     }
   }
@@ -642,21 +676,29 @@
   .SDiv .searchItem {
     padding: 2px 2.5px;
   }
-  .SDiv .fiexdBtn{
+
+  .SDiv .fiexdBtn {
     position: fixed;
-    bottom: 150px;
+    bottom: 180px;
     right: 10px;
     z-index: 1000;
   }
 
-  .SDiv .fiexdBtn1{
+  .SDiv .fiexdBtn1 {
     position: fixed;
-    bottom: 100px;
+    bottom: 130px;
     right: 10px;
     z-index: 1000;
   }
 
-  .SDiv .el-collapse-item__header{
+  .SDiv .fiexdBtn2 {
+    position: fixed;
+    bottom: 80px;
+    right: 10px;
+    z-index: 1000;
+  }
+
+  .SDiv .el-collapse-item__header {
     /*text-indent: 20px;*/
   }
 
