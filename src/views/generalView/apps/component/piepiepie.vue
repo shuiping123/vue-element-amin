@@ -4,12 +4,14 @@
 
 <script>
   import { request } from '../../../../network'
+  import ResizeObserverPolyfill from 'resize-observer-polyfill';
 
   export default {
     name: 'piepiepie',
     data(){
       return{
-        myChart:null
+        myChart:null,
+        data:null
       }
     },
     mounted() {
@@ -22,7 +24,7 @@
         // 渲染echarts图表 - 暂无数据的提示
         this.myChart.setOption(this.$charts_setting.noDataOption,true)
         // 绑定resize函数
-        new ResizeObserver(entries => {
+        new ResizeObserverPolyfill(entries => {
           // 注意，entres是个数组，数组项为每个需要监听的DOM节点
           entries.forEach(entry => {
             this.myChart.resize();
@@ -31,6 +33,7 @@
       },
       renderFun(searchInfo){
         this.myChart.showLoading(_.cloneDeep(this.$charts_setting.loadingOption),true);
+        this.data=null;
         request({
           url: '/Ashx/ISystemOverview.ashx',
           params: {
@@ -46,6 +49,7 @@
           this.myChart.hideLoading();
           if (res.returncode == 0) {
 
+            this.data=res.returndata;
 
             let colorList=this.$charts_setting.colorList;
             var pageNum = 3;//每页显示多少个饼图
@@ -123,6 +127,25 @@
           }
           this.myChart.resize();
         })
+      },
+      downExcel(){
+        if (this.data){
+          let data={
+            name:'子版本访问量分布(辖下一级组织层级)',
+            data:[['单位','模块','访问量(人)']]
+          }
+          this.data.map((dataItem,dataKey)=>{
+            dataItem.data.map((item,key)=>{
+              data.data.push([dataItem.name,item.name,item.value]);
+            })
+          })
+          this.$current.exportExcel(data.name,data);
+        }else {
+          this.$message({
+            message: '数据未加载，请加载后重试',
+            type: 'warning'
+          });
+        }
       }
     }
   }

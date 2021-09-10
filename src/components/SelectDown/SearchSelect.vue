@@ -12,14 +12,14 @@
           <!--时间选择-->
           <time-choose v-if="showtime" ref="datetime" type="timerange" :value.sync="date2"></time-choose>
           <!--单位选择-->
-          <tree-select v-if="com=='multiple'" :data="data"
+          <tree-select v-if="com&&com=='multiple'" :data="data"
                        ref="coms"
                        @changeCheck="changeCheck('com')"
                        :checkData.sync="coms"
                        :check-strictly="true"
                        placeholder="请选择单位"
                        :checkedKeys="coms"></tree-select>
-          <select-down-normal v-if="com!=='multiple'" :data="data"
+          <select-down-normal v-if="com&&com!=='multiple'" :data="data"
                               ref="coms"
                               :check-strictly="true"
                               :multiple="false"

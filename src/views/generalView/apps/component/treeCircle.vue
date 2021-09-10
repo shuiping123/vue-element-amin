@@ -4,17 +4,32 @@
 
       <!--使用分布-->
       <el-tab-pane label="使用分布" name="first">
-        <div id="guanxiId" style="width: 100%;" :style="{height:height}"></div>
+        <card-box :style="{height:height}" :isfull="isFull1">
+          <div style="z-index: 2" :style="isFull1?'':{position:'absolute',width:'100%'}">
+            <fullscroll-tool :isfull.sync="isFull1"/>
+          </div>
+          <div id="guanxiId" style="width: 100%;height:100%"></div>
+        </card-box>
       </el-tab-pane>
 
       <!--安装分布-->
       <el-tab-pane label="安装分布" name="second">
-        <div id="guanxiId2" style="width: 100%;" :style="{height:height}"></div>
+        <card-box :style="{height:height}" :isfull="isFull2">
+          <div style="z-index: 2" :style="isFull1?'':{position:'absolute',width:'100%'}">
+            <fullscroll-tool :isfull.sync="isFull2"/>
+          </div>
+          <div id="guanxiId2" style="width: 100%;height:100%"></div>
+        </card-box>
       </el-tab-pane>
 
       <!--关联软件-->
       <el-tab-pane label="关联软件" name="third">
-        <div id="guanxiId3" style="width: 100%;" :style="{height:height}"></div>
+        <card-box :style="{height:height}" :isfull="isFull3">
+          <div style="z-index: 2" :style="isFull1?'':{position:'absolute',width:'100%'}">
+            <fullscroll-tool :isfull.sync="isFull3"/>
+          </div>
+          <div id="guanxiId3" style="width: 100%;height:100%"></div>
+        </card-box>
       </el-tab-pane>
     </el-tabs>
   </div>
@@ -22,6 +37,7 @@
 
 <script>
   import { request } from '@/network'
+  import ResizeObserverPolyfill from 'resize-observer-polyfill';
 
   export default {
     name: 'treeCircle',
@@ -30,9 +46,9 @@
         type: Object,
         default: {}
       },
-      height:{
-        type:String,
-        default:'350px'
+      height: {
+        type: String,
+        default: '350px'
       }
     },
     data() {
@@ -42,7 +58,10 @@
           guanxiEcharts: null,
           guanxiEcharts2: null,
           guanxiEcharts3: null
-        }
+        },
+        isFull1: false,
+        isFull2: false,
+        isFull3: false
       }
     },
     components: {},
@@ -56,26 +75,26 @@
         if (!this.charts.guanxiEcharts2) this.charts.guanxiEcharts2 = this.$echarts.init(document.getElementById('guanxiId2'))
         if (!this.charts.guanxiEcharts3) this.charts.guanxiEcharts3 = this.$echarts.init(document.getElementById('guanxiId3'))
         // 渲染echarts图表 - 暂无数据的提示
-        this.charts.guanxiEcharts.setOption(this.$charts_setting.noDataOption,true)
-        this.charts.guanxiEcharts2.setOption(this.$charts_setting.noDataOption,true)
-        this.charts.guanxiEcharts3.setOption(this.$charts_setting.noDataOption,true)
+        this.charts.guanxiEcharts.setOption(this.$charts_setting.noDataOption, true)
+        this.charts.guanxiEcharts2.setOption(this.$charts_setting.noDataOption, true)
+        this.charts.guanxiEcharts3.setOption(this.$charts_setting.noDataOption, true)
         // 绑定resize函数
-        new ResizeObserver(entries => {
+        new ResizeObserverPolyfill(entries => {
           // 注意，entres是个数组，数组项为每个需要监听的DOM节点
           entries.forEach(entry => {
-            this.resizeFun();
+            this.resizeFun()
           })
         }).observe(document.querySelector('#guanxiId'))
-        new ResizeObserver(entries => {
+        new ResizeObserverPolyfill(entries => {
           // 注意，entres是个数组，数组项为每个需要监听的DOM节点
           entries.forEach(entry => {
-            this.resizeFun();
+            this.resizeFun()
           })
         }).observe(document.querySelector('#guanxiId2'))
-        new ResizeObserver(entries => {
+        new ResizeObserverPolyfill(entries => {
           // 注意，entres是个数组，数组项为每个需要监听的DOM节点
           entries.forEach(entry => {
-            this.resizeFun();
+            this.resizeFun()
           })
         }).observe(document.querySelector('#guanxiId3'))
       },
@@ -109,9 +128,9 @@
         }).then(res => {
           guanxiEcharts.hideLoading()
           if (res.returncode == 0) {
-            let tooltip=_.cloneDeep(this.$charts_setting.tooltipOption);
-            let legend=_.cloneDeep(this.$charts_setting.legendOption);
-            let label=_.cloneDeep(this.$charts_setting.labelOption);
+            let tooltip = _.cloneDeep(this.$charts_setting.tooltipOption)
+            let legend = _.cloneDeep(this.$charts_setting.legendOption)
+            let label = _.cloneDeep(this.$charts_setting.labelOption)
             colors = _.cloneDeep(_this.$charts_setting.colorList)
             var getdata = function getData() {
               let arr = []
@@ -159,7 +178,7 @@
             } else {
               option = _.cloneDeep(this.$charts_setting.noDataOption)
             }
-            guanxiEcharts.setOption(option,true)
+            guanxiEcharts.setOption(option, true)
             guanxiEcharts.resize()
 
             // 树形图点击用户跳转
@@ -184,18 +203,18 @@
               }
             })
           } else if (res.returncode == 2) {
-            if (_this.$store.state.login.logState=='login'){
+            if (_this.$store.state.login.logState == 'login') {
               this.$alert(res.returnmsg, '错误信息', {
                 confirmButtonText: '重新登录',
                 callback: action => {
                   this.$current.toLoginOut(this)
-                  this.$store.commit('CHANGE_LOG_STATE','logout')
+                  this.$store.commit('CHANGE_LOG_STATE', 'logout')
                 }
               })
             }
           } else {
-            let errInfo=this.$charts_setting.errOption(res.returnmsg)
-            this.charts.guanxiEcharts.setOption(errInfo,true)
+            let errInfo = this.$charts_setting.errOption(res.returnmsg)
+            this.charts.guanxiEcharts.setOption(errInfo, true)
           }
         })
 
@@ -221,9 +240,9 @@
           .then(res => {
             guanxiEcharts.hideLoading()
             if (res.returncode == 0) {
-              let tooltip=_.cloneDeep(this.$charts_setting.tooltipOption);
-              let legend=_.cloneDeep(this.$charts_setting.legendOption);
-              let label=_.cloneDeep(this.$charts_setting.labelOption);
+              let tooltip = _.cloneDeep(this.$charts_setting.tooltipOption)
+              let legend = _.cloneDeep(this.$charts_setting.legendOption)
+              let label = _.cloneDeep(this.$charts_setting.labelOption)
               colors = _.cloneDeep(_this.$charts_setting.colorList)
               var getData = function getData() {
                 let arr = []
@@ -271,22 +290,22 @@
               } else {
                 option = _.cloneDeep(this.$charts_setting.noDataOption)
               }
-              guanxiEcharts.setOption(option,true)
+              guanxiEcharts.setOption(option, true)
               guanxiEcharts.resize()
 
             } else if (res.returncode == 2) {
-              if (_this.$store.state.login.logState=='login'){
+              if (_this.$store.state.login.logState == 'login') {
                 this.$alert(res.returnmsg, '错误信息', {
                   confirmButtonText: '重新登录',
                   callback: action => {
                     this.$current.toLoginOut(this)
-                    this.$store.commit('CHANGE_LOG_STATE','logout')
+                    this.$store.commit('CHANGE_LOG_STATE', 'logout')
                   }
                 })
               }
             } else {
-              let errInfo=this.$charts_setting.errOption(res.returnmsg)
-              this.charts.guanxiEcharts2.setOption(errInfo,true)
+              let errInfo = this.$charts_setting.errOption(res.returnmsg)
+              this.charts.guanxiEcharts2.setOption(errInfo, true)
             }
 
           })
@@ -312,9 +331,9 @@
           .then(res => {
             guanxiEcharts.hideLoading()
             if (res.returncode == 0) {
-              let tooltip=_.cloneDeep(this.$charts_setting.tooltipOption);
-              let legend=_.cloneDeep(this.$charts_setting.legendOption);
-              let label=_.cloneDeep(this.$charts_setting.labelOption);
+              let tooltip = _.cloneDeep(this.$charts_setting.tooltipOption)
+              let legend = _.cloneDeep(this.$charts_setting.legendOption)
+              let label = _.cloneDeep(this.$charts_setting.labelOption)
               colors = _.cloneDeep(_this.$charts_setting.colorList)
 
               var getData = function getData() {
@@ -364,27 +383,27 @@
                 option = _.cloneDeep(this.$charts_setting.noDataOption)
               }
 
-              guanxiEcharts.setOption(option,true)
+              guanxiEcharts.setOption(option, true)
               guanxiEcharts.resize()
 
             } else if (res.returncode == 2) {
-              if (_this.$store.state.login.logState=='login'){
+              if (_this.$store.state.login.logState == 'login') {
                 this.$alert(res.returnmsg, '错误信息', {
                   confirmButtonText: '重新登录',
                   callback: action => {
                     this.$current.toLoginOut(this)
-                    this.$store.commit('CHANGE_LOG_STATE','logout')
+                    this.$store.commit('CHANGE_LOG_STATE', 'logout')
                   }
                 })
               }
             } else {
-              let errInfo=this.$charts_setting.errOption(res.returnmsg)
-              this.charts.guanxiEcharts3.setOption(errInfo,true)
+              let errInfo = this.$charts_setting.errOption(res.returnmsg)
+              this.charts.guanxiEcharts3.setOption(errInfo, true)
 
             }
           })
 
-      },
+      }
 
     }
   }

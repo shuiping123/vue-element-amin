@@ -131,6 +131,7 @@
           verifycode: ''
         },
         verifycodeSrc:'/ShowCode.aspx',
+        // verifycodeSrc:'http://192.168.0.111:8001/ShowCode.aspx',
         checked: false,
         identifyCodes: '1234567890',
         identifyCode: '',

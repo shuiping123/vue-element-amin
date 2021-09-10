@@ -172,14 +172,28 @@ export const asyncRoutes = [
     path: '/general-view',
     name: 'generalview',
     component: Layout,
-    meta: { title: '概览', icon: 'icon', noCache: false },
+    meta: { title: '概览', icon: 'dashboard', noCache: false },
     children: [
+      {
+        path: 'appzh-view',
+        hidden: false,
+        component: () => import('@/views/generalView/appzh/index'),
+        name: 'appzh-view',
+        meta: { title: '软件需求分析', icon: 'skill', noCache: false }
+      },
       {
         path: 'apps-view',
         hidden: false,
         component: () => import('@/views/generalView/apps/index'),
         name: 'apps-view',
-        meta: { title: '软件概览', icon: 'icon', noCache: false }
+        meta: { title: '软件维度洞察', icon: 'component', noCache: false }
+      },
+      {
+        path: 'comzh-view',
+        hidden: false,
+        component: () => import('@/views/generalView/comzh/index'),
+        name: 'comzh-view',
+        meta: { title: '公司维度洞察', icon: 'chart', noCache: false }
       },
 
     ]
@@ -200,7 +214,7 @@ const createRouter = () => new Router({
   // mode: 'history', // require service support
   scrollBehavior: () => ({ y: 0 }),
   routes: constantRoutes,
-  mode:'history'
+  mode:'hash'
 })
 
 const router = createRouter()

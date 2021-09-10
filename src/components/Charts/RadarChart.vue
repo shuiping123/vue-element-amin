@@ -1,8 +1,9 @@
 <template>
-    <div class="raderDiv" style="width:100%;height:100%"></div>
+      <div class="raderDiv" style="width:100%;height:100%"></div>
 </template>
 
 <script>
+  import ResizeObserverPolyfill from 'resize-observer-polyfill'
   export default {
     name: 'RaderChart',
     props:{
@@ -53,7 +54,7 @@
         // 渲染echarts图表 - 暂无数据的提示
         this.myChart.setOption(this.$charts_setting.noDataOption,true)
         // 绑定resize函数
-        new ResizeObserver(entries => {
+        new ResizeObserverPolyfill(entries => {
           // 注意，entres是个数组，数组项为每个需要监听的DOM节点
           entries.forEach(entry => {
             this.myChart.resize();
@@ -139,6 +140,26 @@
           this.myChart.setOption(option,true);
           this.myChart.resize();
         }
+      },
+      // 导出excel
+      downExcel(excelName){
+        let data={
+          name:excelName,
+          data:[['序号','单位名称']]
+        }
+        // 表头
+        this.data.indicator.map(item=>{
+          data.data[0].push(item.text);
+        })
+        // 表身
+        this.data.data.map((item,key)=>{
+          let arr=[key+1,item.name];
+          item.value.map((value)=>{
+            arr.push(value)
+          })
+          data.data.push(arr)
+        })
+        this.$current.exportExcel(excelName,data)
       }
     },
   }

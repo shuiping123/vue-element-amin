@@ -9,17 +9,6 @@ export function request(config) {
     headers:{
         'Content-Type': ' application/x-www-form-urlencoded',
     },
-    // headers: {
-    //   'Access-Control-Allow-Headers': 'x-requested-with,content-type',
-    //   'Access-Control-Allow-Methods': 'OPTIONS,POST,GET',
-    //   'Access-Control-Allow-Origin': '*',
-    //   'Cache-Control': 'private',
-    //   'Content-Length': '373',
-    //   'Content-Type': ' application/json; charset=utf-8',
-    //   'Server': 'Microsoft-IIS/10.0'
-    // }
-    // xhrFields: { withCredentials: true },
-    // crossDomain: true
   })
   instance.interceptors.response.use(res=>{
     if (res.data.returncode==2){

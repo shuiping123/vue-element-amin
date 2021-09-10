@@ -2,6 +2,7 @@
 //不使用JQuery版的
 import html2canvas from 'html2canvas'
 import JsPDF from 'jspdf'
+import context from '@/main'
 
 /**是否生成水印*/
 let watermark_setting = true//true生成 false不生成
@@ -12,7 +13,7 @@ let watermark_setting = true//true生成 false不生成
  * */
 
 
-export function downloadPDF1(ele, pdfName) {
+export function downloadPDF_bak(ele, pdfName) {
 
   let eleW = ele.offsetWidth// 获得该容器的宽
   // let eleW = ele.offsetWidth;// 获得该容器的宽
@@ -82,11 +83,15 @@ export function downloadPDF1(ele, pdfName) {
 }
 
 export function downloadPDF(ele, pdfName) {
-
+  const tip=context.$notify({
+    title: 'PDF生成中...',
+    message: 'PDF文件生成中，请稍后...',
+    duration: 0
+  });
   let divs = ele.querySelectorAll('.BgBody>.el-row')
   // ele.querySelector('.BgBody').appendChild(div)
   var pdf = new JsPDF('', 'pt', 'a4')
-  let watermark = 'http://localhost:8001/watermark.png'
+  let watermark = '/watermark.png'
   let image = new Image()
   image.crossOrigin = ''
   image.src = watermark
@@ -103,6 +108,12 @@ export function downloadPDF(ele, pdfName) {
         pdf.addImage(watermark, 'PNG', 0, 0, 592.28, 841.89)
       }
       pdf.save(pdfName)
+      tip.close();
+      context.$notify({
+        title: '成功',
+        message: 'PDF导出成功',
+        type: 'success'
+      });
       return false
     }
     html2canvas(divs[key], {

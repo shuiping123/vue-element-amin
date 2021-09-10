@@ -17,10 +17,39 @@
      */
 -->
 <template>
-  <div>
-    <button @click="exportExcel">测试</button>
-    <button @click="sheet_from_array_of_arrays2(data,10)">测试2</button>
+  <div class="service-center">
+    <el-table :data="tableData" style="width: 100%">
+      <el-table-column type="expand">
+        <template slot-scope="scope">
+          <el-table :data="scope.row.children" style="width: calc(100% - 47px)" class="two-list">
+            <el-table-column type="selection" width="55"></el-table-column>
+            <el-table-column prop="city_name" label="城市"></el-table-column>
+            <el-table-column prop="price" label="成本价"></el-table-column>
+            <el-table-column prop="sale_price" label="售出价"></el-table-column>
+            <el-table-column prop="discount_price" label="折扣价"></el-table-column>
+            <el-table-column prop="product_online_time" label="上架时间"></el-table-column>
+            <el-table-column prop="product_off_time" label="下架时间"></el-table-column>
+            <el-table-column></el-table-column>
+            <el-table-column></el-table-column>
+            <el-table-column prop="cat_id" label="状态"/>
+            <el-table-column prop="cat_id" label="新增"/>
+          </el-table>
+        </template>
+      </el-table-column>
+      <el-table-column type="selection" width="55"/>
+      <el-table-column prop="product_id" label="ID"></el-table-column>
+      <el-table-column label="商品名称" prop="name"></el-table-column>
+      <el-table-column label="商品构成" prop="name"/>
+      <el-table-column label="商品描述" prop="spu_desc"></el-table-column>
+      <el-table-column label="支付方式" prop="pay_type"/>
+      <el-table-column label="渠道" prop="from_type"/>
+      <el-table-column label="商品类目" prop="product_type"/>
+      <el-table-column label="商品标签" prop="product_sign"></el-table-column>
+      <el-table-column label="状态" prop="is_online"/>
+      <el-table-column label="操作" prop="pay"/>
+    </el-table>
   </div>
+
 </template>
 
 <script>
@@ -31,102 +60,32 @@
     name: 'tree-select',
     data(){
       return {
-        value2: '',
-        data :[
-
-          [ "id",    "name", "value" ],
-
-          [    1, "sheetjs",    7262 ],
-
-          [    2, "js-xlsx",    6969 ]
-
-        ]
+        height:'100px',
+        tableData:[]
       }
     },
     methods:{
-      exportExcel(){
-        var _data = [
-
-          [ "id",    "name", "value" ],
-
-          [    1, "中文测试",    7262 ],
-
-          [    2, "js-xlsx",    6969 ]
-
-        ];
-        // var ws = XLSX.utils.json_to_sheet([
-        //   { S:1, h:2, e:3, e_1:4, t:5, J:6, S_1:7 },
-        //   { S:2, h:3, e:4, e_1:5, t:6, J:7, S_1:8 }
-        // ], {header:["S","h","e","e_1","t","J","S_1"]});
-        const ws= XLSX.utils.aoa_to_sheet(_data);
-        ws["A1"].s = {									//为某个单元格设置单独样式
-          font: {
-            name: '宋体',
-            sz: 24,
-            bold: true,
-            color: { rgb: "FFFFAA00" }
-          },
-          alignment: { horizontal: "center", vertical: "center", wrap_text: true },
-          fill: { bgcolor: { rgb: '000000' } }
-        }
-        // ws[v.position].s = {
-        //   border:{
-        //     top:{style:'thin'}, left:{style:'thin'},bottom:{style:'thin'},right:{style:'thin'}
-        //   }
-        // }
-        console.log(ws)
-
-        /* generate workbook and add the worksheet */
-        const wb = XLSX.utils.book_new();
-        XLSX.utils.book_append_sheet(wb, ws, '测试内容');
-        // XLSX.utils.book_append_sheet(wb, ws, '测试内容2');
-        /* save to file */
-        XLSX.writeFile(wb, 'SheetJS.xlsx');
-      },
-      sheet_from_array_of_arrays2(data, topLength, opts) {
-        let ws = {};
-        let range = {
-          s: {
-            c: 10000000,
-            r: 10000000
-          },
-          e: {
-            c: 0,
-            r: 0
-          }
-        };
-        for (let R = 0; R !== data.length; ++R) {
-          for (let C = 0; C !== data[R].length; ++C) {
-            if (range.s.r > R) range.s.r = R;
-            if (range.s.c > C) range.s.c = C;
-            if (range.e.r < R) range.e.r = R;
-            if (range.e.c < C) range.e.c = C;
-            let cell = {
-              v: data[R][C]
-            };
-            if (cell.v === null) continue;
-            let cell_ref = XLSX.utils.encode_cell({
-              c: C,
-              r: R + topLength
-            });
-            if (typeof cell.v === 'number') cell.t = 'n';
-            else if (typeof cell.v === 'boolean') cell.t = 'b';
-            else if (cell.v instanceof Date) {
-              cell.t = 'n';
-              cell.z = XLSX.SSF._table[14];
-              cell.v = datenum(cell.v);
-            } else cell.t = 's';
-
-            ws[cell_ref] = cell;
-          }
-        }
-        if (range.s.c < 10000000) ws['!ref'] = XLSX.utils.encode_range(range);
-        return ws;
+      test(num){
+        this.height=num;
       }
     }
   }
 </script>
 
 <style>
+  .parent{
+    width:100%;
+
+    display:flex;
+    flex-flow:column nowrap;
+  }
+  .a{
+    height:20px;
+    background:red;
+  }
+  .b{
+    flex:1;
+    background:green;
+  }
 
 </style>

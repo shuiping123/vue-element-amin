@@ -25,6 +25,8 @@
 </template>
 
 <script>
+  import ResizeObserverPolyfill from 'resize-observer-polyfill';
+
   export default {
     name: 'CardItem',
     props:{

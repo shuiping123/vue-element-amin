@@ -9,7 +9,7 @@
   //    1表示显示loading动画
   // data传入数据
   //    如果是空对象，显示暂无数据
-
+  import ResizeObserverPolyfill from 'resize-observer-polyfill'
 export default {
   name: 'pie-and-general',
   props: {
@@ -40,7 +40,7 @@ export default {
       // window.addEventListener('resize', () => {
       //   this.myChart.resize();
       // })
-      new ResizeObserver(entries => {
+      new ResizeObserverPolyfill(entries => {
         // 注意，entres是个数组，数组项为每个需要监听的DOM节点
         entries.forEach(entry => {
           this.myChart.resize();

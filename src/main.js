@@ -1,4 +1,5 @@
 import 'babel-polyfill'
+
 import Vue from 'vue'
 
 
@@ -30,8 +31,20 @@ import _ from 'lodash'
  * */
 import currentJs from './assets/js/current.js';//通用函数
 import charts_setting from '@/assets/js/charts_setting'//echarts样式配置
+
+import throttle from 'throttle-debounce/throttle'
 Vue.prototype.$current=currentJs;
 Vue.prototype.$charts_setting=charts_setting.config;
+Vue.prototype.throttle=throttle;
+
+import FullscrollTool from '@/components/Tools/FullscrollTool'
+import DownExcelTool from '@/components/Tools/DownExcelTool'
+import TagTabTool from '@/components/Tools/TagTabTool'
+import CardBox from '@/components/CardBox'
+Vue.component('FullscrollTool',FullscrollTool)
+Vue.component('DownExcelTool',DownExcelTool)
+Vue.component('TagTabTool',TagTabTool)
+Vue.component('CardBox',CardBox)
 
 
 /**

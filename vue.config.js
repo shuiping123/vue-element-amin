@@ -24,7 +24,8 @@ module.exports = {
    * In most cases please use '/' !!!
    * Detail: https://cli.vuejs.org/config/#publicpath
    */
-  publicPath: '/',
+  // publicPath: '/',
+  publicPath: './',
   outputDir: 'dist',
   assetsDir: 'static',
   lintOnSave: process.env.NODE_ENV === 'development',
@@ -32,24 +33,23 @@ module.exports = {
   devServer: {
     port: port,
     open: true,
-
     overlay: {
       warnings: false,
       errors: true
     },
     // before: require('./mock/mock-server.js'),
-    proxy: {
-      [process.env.VUE_APP_BASE_API]: {
-        target: `http://192.168.0.111:8001/`,
-        // target: `http://localhost:8080/`,
-        changeOrigin: true,
-        ws: true,
-        secure: false,
-        pathRewrite: {
-          ['^' + process.env.VUE_APP_BASE_API]: ''
-        }
-      }
-    }
+    // proxy: {
+    //   [process.env.VUE_APP_BASE_API]: {
+    //     target: `http://192.168.0.111:8001/`,
+    //     // target: `http://localhost:8080/`,
+    //     changeOrigin: true,
+    //     ws: true,
+    //     secure: false,
+    //     pathRewrite: {
+    //       ['^' + process.env.VUE_APP_BASE_API]: ''
+    //     }
+    //   }
+    // }
 
     // proxy: {
     //   'test': {
@@ -72,17 +72,35 @@ module.exports = {
       alias: {
         '@': resolve('src')
       }
-    }
+    },
   },
   transpileDependencies: [
+    'element-ui',
+    'vuex',
+    'vue',
+    'js-cookie',
+    'xe-utils',
+    'vxe-table',
+    'elt-transfer',
+
     'axios',
     'babel-polyfill',
     'clipboard',
     'codemirror',
     'downloadjs',
     'driver.js',
-    'dropzone'
-  ],
+    'dropzone',
+  ],//这些是main.js中引入的，一一对应
+
+  // transpileDependencies: [
+  //     'axios',
+  //     'babel-polyfill',
+  //     'clipboard',
+  //     'codemirror',
+  //     'downloadjs',
+  //     'driver.js',
+  //     'dropzone'
+  //   ],
   chainWebpack(config) {
     // it can improve the speed of the first screen, it is recommended to turn on preload
     // it can improve the speed of the first screen, it is recommended to turn on preload
@@ -101,9 +119,25 @@ module.exports = {
 
     // set svg-sprite-loader
     config.module
+      .rule('fonts')
+      .use('url-loader')
+      .tap(options => {
+        return {
+          ...options,
+          limit: 0 // 这个数值可以设置为很大，很大的话，打包之后的dist文件夹中就不会出现fonts目录了，因为这个时候所有的字体文件都被转成base64放到css文件中了
+        }
+      })
+    config.module
       .rule('svg')
       .exclude.add(resolve('src/icons'))
       .end()
+    // config.module
+    //   .rule('css')
+    //   .test(/\.css$/)
+    //   .use('css-loader')
+    //   .loader('css-loader')
+    //   .loader('postcss-loader')
+    //   .end()
     config.module
       .rule('icons')
       .test(/\.svg$/)
@@ -115,6 +149,21 @@ module.exports = {
         symbolId: 'icon-[name]'
       })
       .end()
+
+    // config.module
+    //   .rule('jsx-px2rem-loader')
+    //   .test(/\.js$/)
+    //   .exclude
+    //   .add([path.resolve('../src/pages/.umi'), path.resolve('node_modules')])
+    //   .end()
+    //   .use('../loader/jsx-px2rem-loader')
+    //   .loader(path.join(__dirname, '../loader/jsx-px2rem-loader'))
+
+    // config.module
+    //   .rule('css')
+    //   .test(/\.css$/)
+    //   .use(["css-loader", "postcss-loader"])
+    //   .end()
 
     config
       .when(process.env.NODE_ENV !== 'development',
@@ -155,5 +204,7 @@ module.exports = {
           config.optimization.runtimeChunk('single')
         }
       )
-  }
+    // config.entry('polyfill').add('babel-polyfill')
+    // config.entry('polyfill').add('@babel/polyfill')
+  },
 }

@@ -4,12 +4,14 @@
 
 <script>
   import { request } from '../../../../network'
+  import ResizeObserverPolyfill from 'resize-observer-polyfill';
 
   export default {
     name: 'lines',
     data(){
       return{
-        myChart:null
+        myChart:null,
+        data:null
       }
     },
     mounted() {
@@ -22,7 +24,7 @@
         // 渲染echarts图表 - 暂无数据的提示
         this.myChart.setOption(this.$charts_setting.noDataOption,true)
         // 绑定resize函数
-        new ResizeObserver(entries => {
+        new ResizeObserverPolyfill(entries => {
           // 注意，entres是个数组，数组项为每个需要监听的DOM节点
           entries.forEach(entry => {
             this.myChart.resize();
@@ -31,6 +33,7 @@
       },
       renderFun(searchInfo){
         this.myChart.showLoading(_.cloneDeep(this.$charts_setting.loadingOption),true);
+        this.data=null;
         request({
           url: '/Ashx/ISystemOverview.ashx',
           params: {
@@ -65,6 +68,7 @@
             });
 
 
+            this.data={data,xAxisData,lengendData}
 
 
 
@@ -134,6 +138,34 @@
           }
           this.myChart.resize();
         })
+      },
+      downExcel(){
+        if (this.data){
+          let data={
+            name:'授权并发使用趋势',
+            data:[]
+          }
+          let titleArr=['序号','日期']
+          this.data.lengendData.map(item=>{
+            titleArr.push(item)
+          })
+          data.data.push(titleArr);
+          this.data.xAxisData.map((dataItem,dataKey)=>{
+            let arr=[dataKey+1,dataItem]
+            this.data.data.map((item,key)=>{
+              arr.push(item.data[dataKey])
+            })
+            data.data.push(arr)
+          })
+          this.$current.exportExcel(data.name,data);
+        }else {
+          this.$message({
+            message: '数据未加载，请加载后重试',
+            type: 'warning'
+          });
+        }
+
+
       }
     }
   }

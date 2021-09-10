@@ -1,9 +1,15 @@
-.chartDiv{
+html,body{
+  color: black;
+}
+
+
+.chartDiv {
   width: 100%;
   height: 100%;
 }
+
 /*页内背景色*/
-.BgBody{
+.BgBody {
   background: #F2F6FC;
   padding: 10px 20px;
 }
@@ -13,29 +19,58 @@
   flex-wrap: wrap;
 }
 
-:root{
-  --backgound-card:#ffffff;/*卡片背景色*/
-  --card-title-color:#303133;/*卡片标题字体颜色*/
-  --mini-box-color:#42b983;/*页面主色调，一般用于标题块儿，某些标题特殊颜色，icon特殊颜色，视情况而定*/
-  --box-color-blue:#6e50f5;/*页面主色调，一般用于标题块儿，某些标题特殊颜色，icon特殊颜色，视情况而定*/
-  --box-color-font-blue:#65ABE7;/*页面主色调，一般用于标题块儿，某些标题特殊颜色，icon特殊颜色，视情况而定*/
-  --err-info-color:#65ABE7;/*报错信息颜色*/
+:root {
+  --backgound-card: #ffffff; /*卡片背景色*/
+  --card-title-color: #303133; /*卡片标题字体颜色*/
+  --mini-box-color: #42b983; /*页面主色调，一般用于标题块儿，某些标题特殊颜色，icon特殊颜色，视情况而定*/
+  --icon-card-color: #ffffff; /*图标的颜色 - 名片旁边的卡片*/
+  --box-color-blue: #6e50f5; /*页面主色调，一般用于标题块儿，某些标题特殊颜色，icon特殊颜色，视情况而定*/
+  --box-color-font-blue: #65ABE7; /*页面主色调，一般用于标题块儿，某些标题特殊颜色，icon特殊颜色，视情况而定*/
+  --err-info-color: #65ABE7; /*报错信息颜色*/
 }
 
 
 /*卡片背景色*/
-.el-card{
+.el-card {
   background: var(--backgound-card);
   height: 100%;
+  overflow: visible;
 }
+
+.cardBox {
+  display: flex;
+  flex-flow: column nowrap;
+  background: #ffffff;
+}
+
+.cardBoxContent {
+  flex: 1;
+}
+
+/*全屏*/
+.fullScrollStyle {
+  height: 100% !important;
+  z-index: 2009;
+  padding: 30px;
+}
+
+/*弹框padding*/
+.el-dialog__body{
+  padding: 0 20px 30px 20px;
+}
+
+
 /*卡片外框 - 控制中间留白的距离*/
-.cardBoxItem{
+.cardBoxItem {
   padding: 5px;
   height: 100%;
 }
+
 /*卡片头 - 卡片名称*/
-.cardBoxTitle{
+.cardBoxTitle {
+  width: 100%;
   line-height: 18px;
+  height: 20px;
   display: inline-block;
   margin-bottom: 1em;
   font-size: 16px;
@@ -51,15 +86,38 @@
 }
 
 /*超出文本显示省略号 - 可直接使用*/
-.ellipsisDiv{
-  overflow:hidden;
-  text-overflow:ellipsis;
-  white-space:nowrap
+.ellipsisDiv {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap
 }
 
 /*报错信息提示样式*/
-.errInfoStyle{
+.errInfoStyle {
   color: var(--err-info-color);
   font-weight: normal;
   font-size: 16px
 }
+
+
+/*右上角悬浮的按钮*/
+.floatBtn {
+  float: right;
+  margin: 0 5px;
+  font-size: 20px;
+  color: #303133;
+  cursor: pointer;
+}
+
+.floatBtn:hover {
+  color: #42b983;
+  text-shadow: #307f58 1px 1px 3px;
+  font-size: 24px;
+}
+
+/*导出excel按钮*/
+.downExcel {
+  /*padding: 1.5px;!*为了保持样式大小协调*!*/
+}
+
+

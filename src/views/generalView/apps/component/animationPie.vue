@@ -11,6 +11,8 @@
 </template>
 
 <script>
+  import ResizeObserverPolyfill from 'resize-observer-polyfill';
+
   export default {
     name: 'animationPie',
     props: {
@@ -63,13 +65,13 @@
         this.pingfen_jd_Echarts.setOption(this.$charts_setting.noDataOption, true)
         this.pingfenEcharts.setOption(this.$charts_setting.noDataOption, true)
         // 绑定resize函数
-        new ResizeObserver(entries => {
+        new ResizeObserverPolyfill(entries => {
           // 注意，entres是个数组，数组项为每个需要监听的DOM节点
           entries.forEach(entry => {
             this.pingfen_jd_Echarts.resize()
           })
         }).observe(document.querySelector('#SQPG_XX'))
-        new ResizeObserver(entries => {
+        new ResizeObserverPolyfill(entries => {
           // 注意，entres是个数组，数组项为每个需要监听的DOM节点
           entries.forEach(entry => {
             this.pingfenEcharts.resize()
@@ -559,7 +561,6 @@
             }
           }
           var option = {
-            backgroundColor: '#fff',
             title: [{
               text: typeText,
               x: '50%',

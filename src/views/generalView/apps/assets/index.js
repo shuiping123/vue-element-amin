@@ -99,7 +99,7 @@ export default {
           type: 'up',
           image: 'el-icon-message-solid',
           chain: 0,
-          target: ['test2-2', {}]
+          methods: 'targetTag'
         }
       ],
       // 用户使用分布
@@ -140,8 +140,74 @@ export default {
   },
   components: { SearchSelect, titleItem, tableItem, treeCircle, pieAndGeneral, CardItem, animationPie,RadarChart,line_chart,routation,piepiepie,lines },
   methods: {
+    //中转站
+    transferStation(methodsWords){
+      this[methodsWords]()
+    },
+    // 跳转标签tag
+    targetTag(){
+      this.$router.push({
+        name: 'test2-2',
+        params: {}
+      })
+      this.$store.dispatch('tagsView/addView', this.$route)
+    },
     DownPdf(){
-      downloadPDF(this.$el,'测试')
+      downloadPDF(this.$el,'软件维度洞察')
+    },
+    // 名片导出
+    downExcel_baseInfo(){
+      let data={
+        name:'软件名片',
+        data:[
+          ['软件名称：',this.AppBasisInfo.name],
+          ['国家：',this.AppBasisInfo.country],
+          ['厂商：',this.AppBasisInfo.appCom],
+          ['子软件：',this.AppBasisInfo.childApp.join(' | ')],
+          ['类别：',this.AppBasisInfo.type],
+          ['描述：',this.AppBasisInfo.decInfo],
+        ]
+      }
+      this.$current.exportExcel('软件名片',data)
+    },
+    // 用户使用分布导出excel
+    downExcel_userUse(){
+      let data={
+        name:'用户使用分布',
+        data:[['序号','单位名称','访问量(人)']]
+      }
+      data.data.push([1,this.userUsage.data.name,this.userUsage.data.value]);
+      this.userUsage.data.children.map((item,key)=>{
+        data.data.push([key+2,item.name,item.value]);
+      })
+      this.$current.exportExcel('用户使用分布',data)
+    },
+    // 综合分析导出excel
+    downExcel_radar(){
+      this.$refs.radar.downExcel('综合分析');
+    },
+    // 访问及授权用时趋势导出excel
+    downExcel_line(){
+      this.$refs.line_chart.downExcel();
+    },
+    // 超长用时导出excel
+    downExcel_longTimeLst(){
+      let data={
+        name:'超长用时记录',
+        data:[['序号','用户','日期']]
+      }
+      this.longTimeLst.map((item,key)=>{
+        data.data.push([key+1,item.UsrName,item.StartDatetime])
+      })
+      this.$current.exportExcel(data.name,data);
+    },
+    // 子版本访问量分布(辖下一级组织层级)
+    downExcel_piepiepie(){
+      this.$refs.piepiepie.downExcel()
+    },
+    // 授权并发使用趋势
+    downExcel_lines(){
+      this.$refs.lines.downExcel()
     },
     getSearchData() {
       this.searchInfo = this.$refs.searchSelect.getSearchData()
@@ -222,13 +288,20 @@ export default {
               item.chain = `设备总数${data.chain[key] + item.util}`
               return item
             }
+            // 预警特殊显示
+            if (item.id == 6) {
+              item.type = data.chain[7] >= 0 ? 'up' : 'down'
+              item.value = data.data[7]
+              item.util = data.util[7]
+              item.chain = data.chain[7] >= 0 ? '+' + data.chain[7] : data.chain[7]
+              item.chain += data.util[7]
+              return item
+            }
             item.type = data.chain[key] >= 0 ? 'up' : 'down'
             item.chain = data.chain[key] >= 0 ? '+' + data.chain[key] : data.chain[key]
             item.chain += item.util
             return item
           })
-        }  else {
-
         }
       })
     },
@@ -262,7 +335,8 @@ export default {
           _this.pingfen.mjDay = parseFloat(res.outdata1.mjDays)
           _this.pingfen.mjDay_max = parseFloat(res.outdata1.totalSearchDays)
 
-          _this.pingfen.mjDay_pecent =parseFloat(res.outdata1.totalSearchDays)? parseFloat((parseFloat(res.outdata1.mjDays) / parseFloat(res.outdata1.totalSearchDays)).toFixed(2))*100:0
+          _this.pingfen.mjDay_pecent =parseFloat(res.outdata1.totalSearchDays)?
+            parseFloat((parseFloat(res.outdata1.mjDays) / parseFloat(res.outdata1.totalSearchDays)*100).toFixed(2)) :0
           _this.pingfen.mjDay_util = '天'
           _this.SixLst = res.returndata.map(item => {
             return {
