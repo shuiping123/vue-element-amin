@@ -24,8 +24,8 @@ module.exports = {
    * In most cases please use '/' !!!
    * Detail: https://cli.vuejs.org/config/#publicpath
    */
-  // publicPath: '/',
-  publicPath: './',
+  publicPath: '/',// dev时使用
+  // publicPath: './',// build时使用
   outputDir: 'dist',
   assetsDir: 'static',
   lintOnSave: process.env.NODE_ENV === 'development',
@@ -38,18 +38,19 @@ module.exports = {
       errors: true
     },
     // before: require('./mock/mock-server.js'),
-    // proxy: {
-    //   [process.env.VUE_APP_BASE_API]: {
-    //     target: `http://192.168.0.111:8001/`,
-    //     // target: `http://localhost:8080/`,
-    //     changeOrigin: true,
-    //     ws: true,
-    //     secure: false,
-    //     pathRewrite: {
-    //       ['^' + process.env.VUE_APP_BASE_API]: ''
-    //     }
-    //   }
-    // }
+    /** dev环境下使用proxy代理，生产环境下注释此条后build */
+    proxy: {
+      [process.env.VUE_APP_BASE_API]: {
+        target: `http://192.168.0.111:8001/`,
+        // target: `http://localhost:8080/`,
+        changeOrigin: true,
+        ws: true,
+        secure: false,
+        pathRewrite: {
+          ['^' + process.env.VUE_APP_BASE_API]: ''
+        }
+      }
+    }
 
     // proxy: {
     //   'test': {
