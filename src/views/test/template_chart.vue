@@ -17,11 +17,12 @@
 <script>
   import ResizeObserverPolyfill from 'resize-observer-polyfill'
 
+  // test
   export default {
     name: '',
     props: {
       xs: { type: Number, default: 24 },
-      sm: { type: Number, default: 24 },
+      sm: { type: Number, default: 24 }
       md: { type: Number, default: 24 },
       lg: { type: Number, default: 24 },
       height: { type: String, default: '350px' },
