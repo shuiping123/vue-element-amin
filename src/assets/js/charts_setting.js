@@ -100,12 +100,16 @@ const config = {
     }
   },
   labelOption: { //标签样式
-    color: '#000',
+    show:true,
+    // color: '#000',
     fontSize: 12,
     fontFamily: 'SourceHanSansCN'
     // position: "inside",//控制文字位置
     // rotate: 0,//控制倾斜程度
     // show: true
+  },
+  labelLineOption:{
+    show:true,
   },
   radarLabelName: { //标签样式
     color: '#C0C4CC',
@@ -132,6 +136,11 @@ const config = {
     type:'bar',
     barGap: 0,
     barMaxWidth: 30,
+    label:{
+      show:false,
+      fontSize:12,
+      fontWeight: 800
+    }
   },
   timelineOption: {
     axisType: 'category',
@@ -174,6 +183,14 @@ const config = {
     start: 0,
     end: 100,
     bottom: 0,
+  },
+  dataZoomRightOption:{
+    type: 'slider',
+    yAxisIndex: 0,
+    maxValueSpan: 7,
+    width: 10,
+    start: 0,
+    end: 100
   },
   // 仪表盘样式进度条
   dashboardOption:{

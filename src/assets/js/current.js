@@ -4,10 +4,14 @@ import XLSX from 'xlsx'
 
 
 // 退出登录
-async function toLoginOut() {
+async function toLoginOut(path) {
   await context.$store.dispatch('user/logout')
   context.$store.commit('CHANGE_LOG_STATE','logout')
-  context.$router.push(`/login?redirect=${context.$route.fullPath}`)
+  if (path){
+    context.$router.push(`/login?redirect=${path}`)
+  }else {
+    context.$router.push(`/login?redirect=${context.$route.fullPath}`)
+  }
 }
 
 // 密码加密，直接返回密码值
@@ -93,11 +97,51 @@ function colorRgba(sHex, alpha) {
   }
 }
 
+/**
+ * 数组去重
+ * @param arr 传入需要去重的数组
+ * */
+function unique(arr) {
+  for (var i = 0; i < arr.length; i++) {
+    for (var j = i + 1; j < arr.length; j++) {
+      if (arr[i] == arr[j]) {         //第一个等同于第二个，splice方法删除第二个
+        arr.splice(j, 1);
+        j--;
+      }
+    }
+  }
+  return arr;
+}
+
+/**
+ * 深度合并对象  Object.assign(obj1,obj2)的升级版
+ * @param obj1 需要合并其他的obj对象
+ * @param obj2 需要被合并的obj对象
+ * */
+function deepMerge(obj1, obj2) {
+  let key;
+  for (key in obj2) {
+    // 如果target(也就是obj1[key])存在，且是对象的话再去调用deepMerge，否则就是obj1[key]里面没这个对象，需要与obj2[key]合并
+    // 如果obj2[key]没有值或者值不是对象，此时直接替换obj1[key]
+    obj1[key] =
+      obj1[key] &&
+      obj1[key].toString() === "[object Object]" &&
+      (obj2[key] && obj2[key].toString() === "[object Object]")
+        ? deepMerge(obj1[key], obj2[key])
+        : (obj1[key] = obj2[key]);
+  }
+  return obj1;
+}
+
+
+
 export default {
   toLoginOut,
   setEncrypt,
   errDataView,
   exportExcel,
   tagTab,
-  colorRgba
+  colorRgba,
+  unique,
+  deepMerge,
 }

@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import Router from 'vue-router'
+import {request} from '@/network'
 
 Vue.use(Router)
 
@@ -11,6 +12,7 @@ import componentsRouter from './modules/components'
 import chartsRouter from './modules/charts'
 import tableRouter from './modules/table'
 import nestedRouter from './modules/nested'
+import context from '@/main'
 
 /**
  * Note: sub-menu only appear when route children.length >= 1
@@ -73,6 +75,7 @@ export const constantRoutes = [
   {
     path: '/',
     component: Layout,
+    // redirect: '/login'
     redirect: '/general-view/appzh-view'
   },
   // {
@@ -200,7 +203,13 @@ export const asyncRoutes = [
         name: 'comzh-view',
         meta: { title: '公司维度洞察', icon: 'chart', noCache: false }
       },
-
+      {
+        path: 'depzh-view',
+        hidden: false,
+        component: () => import('@/views/generalView/depzh/index'),
+        name: 'depzh-view',
+        meta: { title: '部门维度洞察', icon: 'chart', noCache: false }
+      },
     ]
   },
 
@@ -223,6 +232,30 @@ const createRouter = () => new Router({
 })
 
 const router = createRouter()
+
+// 路由守卫，跳转之前 - 检查登录
+router.beforeEach((to, from, next) => {
+  if (to.path!=='/login'&&from.path!=='/'){
+    request({
+      url: '/Ashx/CheckLogin.ashx',
+    }).then(res=>{
+      if (res.reCode!=0){
+        context.$store.commit('CHANGE_LOG_STATE','logout');
+        context.$alert(res.reMsg, "错误信息", {
+          confirmButtonText: "重新登录",
+          callback: action => {
+            context.$current.toLoginOut(to.path);
+          }
+        })
+      }else {
+        next();
+      }
+    })
+  }else {
+    next();
+  }
+
+})
 
 // Detail see: https://github.com/vuejs/vue-router/issues/1234#issuecomment-357941465
 export function resetRouter() {

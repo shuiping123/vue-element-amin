@@ -115,9 +115,21 @@ html,body{
   font-size: 24px;
 }
 
+/*清除此条浮动*/
+.clearFloat{
+  float: none!important;
+}
+
+
 /*导出excel按钮*/
 .downExcel {
   /*padding: 1.5px;!*为了保持样式大小协调*!*/
 }
 
+/*a标签的样式*/
+.aStyle{
+  color: #0082ff;
+  text-decoration: underline;
+  cursor: pointer;
+}
 

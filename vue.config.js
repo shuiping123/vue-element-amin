@@ -33,6 +33,7 @@ module.exports = {
   devServer: {
     port: port,
     open: true,
+    hot: true,//自动保存
     overlay: {
       warnings: false,
       errors: true
@@ -41,6 +42,7 @@ module.exports = {
     /** dev环境下使用proxy代理，生产环境下注释此条后build */
     proxy: {
       [process.env.VUE_APP_BASE_API]: {
+        // target: `http://192.168.0.253:8001/`,
         target: `http://192.168.0.111:8001/`,
         // target: `http://localhost:8080/`,
         changeOrigin: true,

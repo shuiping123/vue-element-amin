@@ -10,6 +10,7 @@ let watermark_setting = true//true生成 false不生成
 /**
  * @param  ele          要生成 pdf 的DOM元素（容器）
  * @param  padfName     PDF文件生成后的文件名字
+ * @param  type     type
  * */
 
 
@@ -82,13 +83,18 @@ export function downloadPDF_bak(ele, pdfName) {
 
 }
 
-export function downloadPDF(ele, pdfName) {
-  const tip=context.$notify({
+export function downloadPDF(ele, pdfName, type) {
+  const tip = context.$notify({
     title: 'PDF生成中...',
     message: 'PDF文件生成中，请稍后...',
     duration: 0
-  });
-  let divs = ele.querySelectorAll('.BgBody>.el-row')
+  })
+  let divs
+  if (type == 'item') {
+    divs = ele.querySelectorAll('.BgBody>.el-row>.el-col')
+  } else {
+    divs = ele.querySelectorAll('.BgBody>.el-row')
+  }
   // ele.querySelector('.BgBody').appendChild(div)
   var pdf = new JsPDF('', 'pt', 'a4')
   let watermark = '/watermark.png'
@@ -108,12 +114,12 @@ export function downloadPDF(ele, pdfName) {
         pdf.addImage(watermark, 'PNG', 0, 0, 592.28, 841.89)
       }
       pdf.save(pdfName)
-      tip.close();
+      tip.close()
       context.$notify({
         title: '成功',
         message: 'PDF导出成功',
         type: 'success'
-      });
+      })
       return false
     }
     html2canvas(divs[key], {
@@ -135,7 +141,7 @@ export function downloadPDF(ele, pdfName) {
         pdf.addImage(pageData, 'JPEG', 0, height, imgWidth, imgHeight)
         height += imgHeight
       } else {
-        if (watermark_setting){
+        if (watermark_setting) {
           pdf.addImage(watermark, 'PNG', 0, 0, 592.28, 841.89)
         }
         pdf.addPage()

@@ -106,7 +106,7 @@ const actions = {
     })
   },
 
-  checkLog({ commit, state, dispatch }) {
+  checkLog({ commit, state, dispatch },path) {
     return new Promise((resolve, reject) => {
       checklog().then((res) => {
         if (res.reCode != 0) {
@@ -118,7 +118,8 @@ const actions = {
               // dispatch('logout')
               await dispatch('logout')
               commit('CHANGE_LOG_STATE','logout')
-              router.app.$router.push(`/login?redirect=${router.app.$route.fullPath}`)
+              router.app.$router.push(`/login?redirect=${path}`)
+              // router.app.$router.push(`/login?redirect=${router.app.$route.fullPath}`)
             }
           })
         }

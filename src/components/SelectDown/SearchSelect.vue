@@ -37,7 +37,7 @@
             </el-switch>
           </div>
           <!--部门-->
-          <select-down-normal v-if="dep=='multiple'" :data="dataForDep"
+          <select-down-normal v-if="dep" :data="dataForDep"
                               ref="depRef"
                               :check-strictly="false"
                               :multiple="this.dep=='multiple'"

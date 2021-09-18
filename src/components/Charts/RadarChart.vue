@@ -26,11 +26,11 @@
       /**传入的数据*/
       data:{
         type:Object,
-        default:{
+        default:()=>{return {
           name:'',
           data:[],
           indicator:[]
-        }
+        }}
       }
     },
     data(){
